@@ -1,7 +1,7 @@
 ---
 title: The title
 lead: Taxa from your imagination to the web
-project: Your project
+project: Syrphidae of Italy
 ---
    
 # {{frontmatter.title}}
