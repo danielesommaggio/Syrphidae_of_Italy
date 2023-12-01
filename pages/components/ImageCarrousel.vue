@@ -25,7 +25,7 @@
 
 <script setup>
 import { onMounted, ref, computed } from 'vue'
-import MeromacrusAcutus from './images/MeromacrusAcutus.png'
+import MeromacrusAcutus from './images/MeromacrusAcutus.jpg'
 
 const props = defineProps({
   duration: {
