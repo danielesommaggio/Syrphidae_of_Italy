@@ -40,7 +40,7 @@ const images = [
     label: 'Meromacrus acutus',
     copyright: 'Davide Dal Pos',
     src: MeromacrusAcutus,
-    otuId:
+    otuId: 356
   }
 ]
 
