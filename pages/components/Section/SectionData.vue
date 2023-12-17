@@ -95,20 +95,21 @@ makeAPIRequest('/stats').then((response) => {
   triggerRef(dataTypes)
 })
 
-makeAPIRequest('/taxon_names.json', {
-  params: {
-    per: 1,
-    validity: true,
-    rank: ['NomenclaturalRank::Iczn::SpeciesGroup::Species']
-  }
-}).then(({ headers }) => {
-  dataTypes.value[TYPES.validSpecies].count = Number(
-    headers['pagination-total']
-  )
+async function loadSpeciesCount() {
+  await makeAPIRequest('/taxon_names.json', {
+    params: {
+      page: 1,
+      per: 1,
+      validity: true,
+      rank: ['NomenclaturalRank::Iczn::SpeciesGroup::Species']
+    }
+  }).then(({ headers }) => {
+    dataTypes.value[TYPES.validSpecies].count = Number(
+      headers['pagination-total']
+    )
+  })
 
-  triggerRef(dataTypes)
-})
-await makeAPIRequest('/taxon_names.json', {
+  await makeAPIRequest('/taxon_names.json', {
     params: {
       page: 1,
       per: 1,
