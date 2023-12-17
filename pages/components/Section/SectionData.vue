@@ -108,4 +108,25 @@ makeAPIRequest('/taxon_names.json', {
 
   triggerRef(dataTypes)
 })
+await makeAPIRequest('/taxon_names.json', {
+    params: {
+      page: 1,
+      per: 1,
+      taxon_name_id: [913531],
+      taxon_name_classification: ['TaxonNameClassification::Iczn::Fossil'],
+      validity: true,
+      descendants: true,
+      nomenclature_group: ['Species'],
+      rank: ['NomenclaturalRank::Iczn::SpeciesGroup::Species']
+    }
+  }).then(({ headers }) => {
+    dataTypes.value[TYPES.validExtantSpecies].count =
+      dataTypes.value[TYPES.validSpecies].count -
+      Number(headers['pagination-total'])
+  })
+
+  triggerRef(dataTypes)
+}
+
+loadSpeciesCount()
 </script>
