@@ -37,6 +37,7 @@ import DataType from './Data/DataType.vue'
 
 const TYPES = {
   validSpecies: 'Valid species',
+  validExtantSpecies: 'Valid extant species',
   taxonNames: 'Taxon names',
   projectSources: 'Project sources',
   collectionObjects: 'Collection objects',
@@ -49,6 +50,11 @@ const dataTypes = shallowRef({
     icon: IconOk,
     label: 'Valid species',
     count: 29410
+  },
+  [TYPES.validExtantSpecies]: {
+    icon: IconOk,
+    label: 'Valid extant species',
+    count: 28955
   },
   [TYPES.taxonNames]: {
     icon: IconMicroscope,
