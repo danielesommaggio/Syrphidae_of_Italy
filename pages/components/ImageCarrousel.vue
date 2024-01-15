@@ -25,7 +25,7 @@
 
 <script setup>
 import { onMounted, ref, computed } from 'vue'
-import MeromacrusAcutus from './images/MeromacrusAcutus.jpg'
+import scaeva from './images/scaeva.jpg'
 
 const props = defineProps({
   duration: {
@@ -37,9 +37,9 @@ const props = defineProps({
 const images = [
 
   {
-    label: 'Meromacrus acutus',
-    copyright: 'Davide Dal Pos',
-    src: MeromacrusAcutus,
+    label: 'Scaeva',
+    copyright: 'Serena Magagnoli',
+    src: scaeva,
     otuId: 356
   }
 ]
