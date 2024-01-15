@@ -3,7 +3,6 @@
     <div class="container mx-auto p-4 sm:pt-10 sm:pb-2 relative box-border">
       <div class="prose !container dark:prose-invert">
         <div>
-          <h2>Introduction</h2>
           <p>
             <b>Syrphidae of Italy</b> is a comprehensive database 
             created to include all available information on Italian hoverflies 

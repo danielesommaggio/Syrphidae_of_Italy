@@ -4,7 +4,7 @@
       <h2>Referencing this website</h2>
       <p>
         When referencing this website, please use the following format:
-        Dal Pos <i>et al</i>. The World Ichneumonidae Database
+        Sommaggio <i>et al</i>. Syrphidae of Italy
         [retrieval date]. &lt;
         <a :href="project_url">
           {{ project_url }}
@@ -27,8 +27,7 @@
 
       <h2>Find out more</h2>
       <p>
-      Learn how to collaborate with the 
-      World Ichneumonidae Database. 
+      Learn how to collaborate with <b>Syrphidae of Italy</b>. 
       Contact information, technical details, and more are available 
       <RouterLink to="about">here</RouterLink>.
       </p>
