@@ -74,7 +74,7 @@ const dataTypes = shallowRef({
   [TYPES.images]: {
     icon: IconImage,
     label: 'Images',
-    count: unable
+    count: 100
   },  
   [TYPES.collectionObjects]: {
     icon: IconBug,
