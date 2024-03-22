@@ -14,7 +14,7 @@ The Syrphidae of Italy (SoI) is a virtual space developed to try to fill the man
 
 |Name  | Affiliation | Role    | Email             | 
 |:----- | :----------------------------------------------------| :-------------------------------- | :-----------------|
-|[Daniele Sommaggio](https://scholar.google.com/citations?user=kHS8y3sAAAAJ&hl=it) | University of Modena and Reggio Emilia | Founder, Administrator & Curator | daniele.sommaggio@unimore.it |
+|[Daniele Sommaggio](https://scholar.google.com/citations?user=kHS8y3sAAAAJ&hl=it) | University of Modena and Reggio Emilia (Italy) | Founder, Administrator & Curator | daniele.sommaggio@unimore.it |
 |[Davide Dal Pos](https://www.researchgate.net/profile/Davide-Dal-Pos-2)                   | University of Central Florida, Orlando, FL (USA)     | Curator  |daveliga@gmail.com |
 
 ## Get in contact
