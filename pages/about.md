@@ -2,7 +2,7 @@
 title: About
 contact_email: user@example.com
 copyright: All content is CC 0 so that it maybe be shared throughout the world in places like Wikipedia.
-citation: Sommaggio & Dal Pos, 2024. Syrphidae of Italy (SoI). <i>to be determined</i>, XX, XXX–XXX.
+citation: Syrphidae of Italy (SoI)
 ---
  
 # {{frontmatter.title}}
@@ -21,8 +21,9 @@ The Syrphidae of Italy (SoI) is a virtual space developed to try to fill the man
 If you have questions, want to report an issue with the database, or have suggestions, feel free to contact any of the above curators.
 
 ## Citing
-To cite data from <b>Syrphidae of Italy (SoI)</b>, please use our published data paper: 
-**{{frontmatter.citation}}**
+To cite data from **{{frontmatter.citation}}**, please use our published data paper:
+- Sommaggio, D. & Dal Pos, D. (2024). Sryphidae of Italy (SoI): a comprehensive database for the Italian fauna of Hoverflies. *Nature*, XX: XXX–XXX.  
+
 
 ## The Species File Group (SFG)
 The WID is made possible by the technical and intellectual help from the [Species File Group (SFG)](https://speciesfilegroup.org/index.html), which is an endowment-funded collective of specialists whose broader goal is the advancement of biodiversity informatics. We are located at the University of Illinois, Illinois Natural History Survey. Our group supports the following software/activities:
