@@ -3,8 +3,8 @@
     <div class="prose !container mx-auto dark:prose-invert">
       <h2>Referencing this website</h2>
       <p>
-        When referencing this website, please use the following format:
-        Sommaggio <i>et al</i>. Syrphidae of Italy
+        When referencing this website, please use our published data paper: 
+        Sommaggio, D. & Dal Pos, D. (2024). Sryphidae of Italy (SoI): a comprehensive database for the Italian fauna of Hoverflies. *Nature*, XX: XXX–XXX. 
         [retrieval date]. &lt;
         <a :href="project_url">
           {{ project_url }}
