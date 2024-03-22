@@ -4,7 +4,7 @@
       <div class="prose !container dark:prose-invert">
         <div>
           <p>
-            <b>Syrphidae of Italy</b> is a comprehensive database 
+            <b>Syrphidae of Italy (SoI)</b> is a comprehensive database 
             created to include all available information on Italian hoverflies 
             (Diptera, Syrphidae). In this database, manages in 
             <a href="https://taxonworks.org"> TaxonWorks</a>, you can find 
