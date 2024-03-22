@@ -22,7 +22,7 @@ If you have questions, want to report an issue with the database, or have sugges
 
 ## How to cite
 To cite data from **{{frontmatter.citation}}**, please use our published data paper:
-- Sommaggio, D. & Dal Pos, D. (2024). Sryphidae of Italy (SoI): a comprehensive database for the Italian fauna of Hoverflies. *Nature*, XX: XXX–XXX. [retrieval date]. &lt; <a :href="project_url"> {{ project_url }}
+- Sommaggio, D. & Dal Pos, D. (2024). Sryphidae of Italy (SoI): a comprehensive database for the Italian fauna of Hoverflies. *Nature*, XX: XXX–XXX. [retrieval date]. Available at: https://danielesommaggio.github.io/Syrphidae_of_Italy
 
 To cite individual taxon pages, please see citation at the bottom of each page.
 
