@@ -6,11 +6,10 @@ citation: Project collaborative. 2022. Website title. Available at https://examp
 ---
  
 # {{frontmatter.title}}
-
 The Syrphidae of Italy (SoI) is a virtual space developed to try to fill the many gaps relating to the knowledge of hoverflies in Italy. The collaboration of multiple actors is fundamental for the realization of this project and for this reason we hope that the team will soon be able to expand
 
 ## Meet the team
- _Please contact us if you would like to join this effort._
+ _Please contact us if you would like to join this effort_
 
 |Name  | Affiliation | Role    | Email             | 
 |:----- | :----------------------------------------------------| :-------------------------------- | :-----------------|
