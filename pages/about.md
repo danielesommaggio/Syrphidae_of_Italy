@@ -21,7 +21,7 @@ The Syrphidae of Italy (SoI) is a virtual space developed to try to fill the man
 If you have questions, want to report an issue with the database, or have suggestions, feel free to contact any of the above curators.
 
 ## Citing
-* To cite this website, please refer to our paper: {{frontmatter.citation}}
+* To cite this website, please refer to our paper: **{{frontmatter.citation}}**
 
 ## The Species File Group (SFG)
 The WID is made possible by the technical and intellectual help from the [Species File Group (SFG)](https://speciesfilegroup.org/index.html), which is an endowment-funded collective of specialists whose broader goal is the advancement of biodiversity informatics. We are located at the University of Illinois, Illinois Natural History Survey. Our group supports the following software/activities:
