@@ -18,8 +18,8 @@
   </template>
   
   <script setup>
-  import { ref, onMounted } from 'vue'
-  import { makeAPIRequest } from '@/utils'
+  import { makeAPIRequest } from '@/utils';
+import { onMounted, ref } from 'vue';
   
   const SCRUTINY_ID = 3102
   
