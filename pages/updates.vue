@@ -1,6 +1,6 @@
 <template>
     <div class="container mx-auto py-4">
-      <h1 class="text-4xl font-bold">Recent taxa added</h1>
+      <h1 class="text-4xl font-bold">Recent taxa and bibliography</h1>
       <div class="flex flex-col gap-4 mt-4">
         <RecentTaxonTable
           :parameters="{
@@ -24,9 +24,9 @@
         />
       </div>
     </div>
-  </template>
+</template>
   
-  <script setup>
-  import RecentTable from './components/Section/RecentTable.vue';
+<script setup>
+import RecentTable from './components/Section/RecentTable.vue';
 import RecentTaxonTable from './components/Section/RecentTaxonTable.vue';
-  </script>
+</script>
