@@ -7,3 +7,6 @@
 
     - label: About
       link: /about
+    
+    - label: Updates
+      link: /updates
