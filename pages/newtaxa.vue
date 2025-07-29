@@ -15,7 +15,7 @@
       </h1>
       <p class="mt-3 text-lg text-gray-700 leading-relaxed max-w-full">
         Below is a curated list of the most recently added taxa to the <span class="font-medium text-gray-900">Syrphidae of Italy (SoI)</span> database.
-      </p>/b
+      </p>
 <p class="mt-4 text-sm text-gray-500 italic">
   If you have additional information, images, or corrections for any taxa listed, please <RouterLink to="about" class="text-gray-700 underline hover:text-gray-900">get in touch with us</RouterLink>.
 </p>
