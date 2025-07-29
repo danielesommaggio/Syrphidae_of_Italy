@@ -3,11 +3,8 @@
       <SectionLandscape />
       <SectionData />
       <hr class="border-base-muted" />
-      <SectionDescription />
-      <SectionAuthor class="shadow-sm" />
-      <hr class="border-base-muted" />
-      <SectionHighlights />
-      <SectionAnnouncements />
+      <SectionDescription class="border-b "/>
+      <SectionHighlights class="drop-shadow" />
       <SectionTerms class="drop-shadow" />
     </div>
   </template>
