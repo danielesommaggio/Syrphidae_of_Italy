@@ -1,5 +1,5 @@
 <template>
-  <section class="container mx-auto py-5 px-4 bg-white rounded-lg shadow-lg mt-12 mb-10">
+  <section class="container max-w-screen-xl mx-auto py-5 px-4 sm:px-10 bg-white rounded-lg shadow-lg mt-12 mb-10">
     <h1
       class="text-4xl font-semibold text-gray-900 tracking-tight relative inline-block mb-6"
     >
