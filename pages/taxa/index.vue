@@ -16,12 +16,14 @@
               >
                 <VTableBodyCell>
                   <RouterLink
-                    :to="{
-                      name: 'taxa-name',
-                      params: { name: item.taxonName }
-                    }"
-                    v-html="item.taxonName"
-                  />
+                  :to="{ name: 'taxa-name', params: { name: item.taxonName } }"
+                  style="text-decoration: none;"
+                  >
+                  <span v-html="item.taxonName"></span>
+                  </RouterLink>
+                  <span style="font-size: 0.85em; color: #666; margin-left: 4px;">
+                    {{ item.author }}
+                  </span>
                 </VTableBodyCell>
               </VTableBodyRow>
             </VTableBody>
@@ -33,5 +35,5 @@
 </template>
 
 <script setup>
-import taxaList from './constants/taxa.js'
+import taxaList from './constants/taxa.js';
 </script>
