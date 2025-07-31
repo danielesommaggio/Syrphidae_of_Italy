@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="container mx-auto py-10">
+    <div class="container max-w-screen-xl mx-auto py-10">
       <VCard>
         <VCardContent>
           <VTable>

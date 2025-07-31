@@ -3,6 +3,7 @@ export default [
     taxonName: 'Dasysyrphus',
     author: 'Enderlein, 1938',
     url: '/otus/950163/overview',
+    keyUrl: '',
     introduction: `Enderlein (1938) introduced <i>Dasysyrphus</i> as a subgenus of <i>Syrphus</i>. It was not recognized as a valid genus until the revisions by Hippa (1968) and Vockeroth (1969). The latter author proposed a close relationship between <i>Dasysyrphus</i> and <i>Notosyrphus</i>, despite differences in the structure of the male genitalia. However, this relationship has not been supported by recent molecular data (e.g., Mengual et al., 2015, 2018). Based on molecular evidence, Mengual et al. (2018) suggested a close relationship between <i>Dasysyrphus</i> and <i>Melangyna</i>.`,
     diagnosis: `Within Syrphinae, <i>Dasysyrphus</i> species can be readily separated from all other genera by the following combination of characters: yellow face and scutellum; hairy eyes; absence of yellow bands on scutum; anterior part of the anepisternum without long hairs; marginated abdomen; metasternum bare; black abdomen with yellow markings; abdominal markings usually separated and constricted medially; R4+5 without loop. `,
     description: `
