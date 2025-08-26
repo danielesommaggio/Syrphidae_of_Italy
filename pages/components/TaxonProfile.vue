@@ -12,23 +12,31 @@
       </h2>
 
       <div class="mt-1 flex gap-2 items-center">
-        <!-- Key to the Species Button -->
-        <template v-if="profile.keyUrl">
-          <RouterLink
-            :to="profile.keyUrl"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-serif rounded-full shadow-md hover:bg-green-700 transition-colors duration-300"
-          >
-            <span class="text-base">Key to Species</span>
-          </RouterLink>
-        </template>
-        <template v-else>
-          <button
-            disabled
-            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-300 text-gray-500 font-serif rounded-full shadow-inner cursor-not-allowed"
-          >
-            <span class="text-base">Key to Species</span>
-          </button>
-        </template>
+        <!-- Key to the Species [IT] Button -->
+        <component
+          :is="profile.keyUrl ? 'RouterLink' : 'button'"
+          :to="profile.keyUrl || undefined"
+          :disabled="!profile.keyUrl"
+          class="inline-flex items-center gap-2 px-4 py-2 font-serif rounded-full shadow-md transition-colors duration-300"
+          :class="profile.keyUrl 
+                  ? 'bg-green-600 text-white hover:bg-green-700' 
+                  : 'bg-gray-400 text-white cursor-not-allowed'"
+        >
+          <span class="text-base">Key to Species [IT]</span>
+        </component>
+
+        <!-- Key to the Species [EN] Button -->
+        <component
+          :is="profile.keyUrlEN ? 'RouterLink' : 'button'"
+          :to="profile.keyUrlEN || undefined"
+          :disabled="!profile.keyUrlEN"
+          class="inline-flex items-center gap-2 px-4 py-2 font-serif rounded-full shadow-md transition-colors duration-300"
+          :class="profile.keyUrlEN 
+                  ? 'bg-green-600 text-white hover:bg-green-700' 
+                  : 'bg-gray-400 text-white cursor-not-allowed'"
+        >
+          <span class="text-base">Key to Species [EN]</span>
+        </component>
 
         <!-- Explore SoI Data Button -->
         <RouterLink
@@ -45,6 +53,7 @@
     <template v-for="(title, key) in SECTIONS">
       <section
         v-if="profile[key]"
+        :key="key"
         class="mt-6 p-4 sm:p-6 border rounded-lg shadow-sm bg-white mb-10"
       >
         <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-2">
@@ -58,21 +67,17 @@
           class="prose max-w-none"
         />
 
-<!-- References with hanging indent -->
-<div
-  v-else
-  class="space-y-2"
->
-  <p
-    v-for="(ref, i) in profile.references"
-    :key="i"
-    class="text-sm text-gray-800 leading-snug pl-6 text-justify"
-    style="text-indent: -1.5rem;"
-  >
-    {{ ref }}
-  </p>
-</div>
-
+        <!-- References with hanging indent -->
+        <div v-else class="space-y-2">
+          <p
+            v-for="(ref, i) in profile.references"
+            :key="i"
+            class="text-sm text-gray-800 leading-snug pl-6 text-justify"
+            style="text-indent: -1.5rem;"
+          >
+            {{ ref }}
+          </p>
+        </div>
       </section>
     </template>
   </div>

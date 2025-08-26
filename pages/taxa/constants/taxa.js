@@ -3,7 +3,8 @@ export default [
     taxonName: 'Dasysyrphus',
     author: 'Enderlein, 1938',
     url: '/otus/950163/overview',
-    keyUrl: '',
+    keyUrl: '/keys/2694',
+    keyUrlEN: '',
     introduction: `Enderlein (1938) introduced <i>Dasysyrphus</i> as a subgenus of <i>Syrphus</i>. It was not recognized as a valid genus until the revisions by Hippa (1968) and Vockeroth (1969). The latter author proposed a close relationship between <i>Dasysyrphus</i> and <i>Notosyrphus</i>, despite differences in the structure of the male genitalia. However, this relationship has not been supported by recent molecular data (e.g., Mengual et al., 2015, 2018). Based on molecular evidence, Mengual et al. (2018) suggested a close relationship between <i>Dasysyrphus</i> and <i>Melangyna</i>.`,
     diagnosis: `Within Syrphinae, <i>Dasysyrphus</i> species can be readily separated from all other genera by the following combination of characters: yellow face and scutellum; hairy eyes; absence of yellow bands on scutum; anterior part of the anepisternum without long hairs; marginated abdomen; metasternum bare; black abdomen with yellow markings; abdominal markings usually separated and constricted medially; R4+5 without loop. `,
     description: `
@@ -28,6 +29,7 @@ export default [
     author: 'Macquart, 1834',
     url: '/otus/950498/overview',
     keyUrl: '',
+    keyUrlEN: '',
     introduction: `Macquart (1834) introduced the genus <i>Didea</i> for the new species <i>Didea fasciata</i> Macquart 1834. Few years later Meigen (1838) described the genus <i>Enica</i> for the new species <i>Enica foesteri</i> Meigen, 1838 now considered as synonym of <i>Didea</i>. The genus <i>Didea</i> is well characterized, and it has been accepted by following authors (e.g. Rondani, 1857; Verrall, 1901; Bezzi and Stein, 1907). Recent phylogenetic studies based on molecular data confirmed the validity of the genus <i>Didea</i>, with a well-supported clade between: <i>Eriozona</i> Schiner, 1860 + (<i>Didea</i> Macquart, 1838 + <i>Megasyrphus</i> Dušsek & Laska, 1967) (Mengual et al., 2015, 2023). `,
     diagnosis: `Within Syrphinae, <i>Didea</i> species can be readily separated from all other genera by the loop in vein R4+5; in addition the abdomen is large and flattened with yellow or white spots and evident lateral margin.`,
     description: `
