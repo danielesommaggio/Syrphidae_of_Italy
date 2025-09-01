@@ -47,14 +47,14 @@
         />
 
         <div v-else class="space-y-2">
-          <p
-            v-for="(ref, i) in profile.references"
-            :key="i"
-            class="text-sm text-gray-800 leading-snug pl-6 text-justify"
-            style="text-indent: -1.5rem;"
-          >
-            {{ ref }}
-          </p>
+<p
+  v-for="(ref, i) in profile.references"
+  :key="i"
+  class="text-sm text-gray-800 leading-snug pl-6 text-justify"
+  style="text-indent: -1.5rem;"
+  v-html="ref"
+></p>
+
         </div>
       </section>
     </template>
