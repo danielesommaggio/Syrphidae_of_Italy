@@ -15,6 +15,11 @@ taxa_page:
           - panel:etymology
           - panel:gbif
           - panel:statistics
+  biology:
+    panels:
+      - - - id: panel:biology
+            bind:
+              topic_id:
   specimen_records:
     rank_group: ['SpeciesGroup']
     panels:
