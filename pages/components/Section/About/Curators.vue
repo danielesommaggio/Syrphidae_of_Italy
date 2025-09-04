@@ -12,7 +12,7 @@
 
     <!-- flex wrapper that centers the grid -->
     <div class="flex">
-      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-2 w-fit mx-auto">
+      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 w-fit mx-auto">
         <div
           v-for="curator in curators"
           :key="curator.email"

@@ -15,5 +15,14 @@ export default [
     email: "daveliga@gmail.com",
     image: "/images/profile3.jpg",// Replace with actual path
   },
+    {
+    name: "José Luis Pereira",
+    url: "https://www.linkedin.com/in/jos%C3%A9-luis-pereira-a4750bb7/",
+    affiliation: "Species File GRoup (SFG)",
+    role: "Webmaster Supervisor",
+    email: "",
+    image: "/images/JosePereira.jpg",// Replace with actual path
+  },
+
 ];
 
