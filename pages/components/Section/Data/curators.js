@@ -5,7 +5,7 @@ export default [
     affiliation: "University of Modena and Reggio Emilia (Italy)",
     role: "Founder, Administrator & Curator",
     email: "daniele.sommaggio@unimore.it",
-    image: "https://your-site.com/images/daniele.jpg", // Replace with actual path
+    image: "/images/DSommaggio.jpg", // Replace with actual path
   },
   {
     name: "Davide Dal Pos",
