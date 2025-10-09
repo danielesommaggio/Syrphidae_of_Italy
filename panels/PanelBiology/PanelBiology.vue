@@ -1,6 +1,5 @@
 <template>
   <VCard>
-    <VCardHeader> Biology </VCardHeader>
     <VCardContent>
       <ClientOnly>
         <VSpinner v-if="isLoading" />
@@ -21,9 +20,9 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, onBeforeUnmount } from 'vue'
 import { makeAPIRequest } from '@/utils'
 import markdownit from 'markdown-it'
+import { onBeforeMount, onBeforeUnmount, ref } from 'vue'
 
 const props = defineProps({
   otuId: {
