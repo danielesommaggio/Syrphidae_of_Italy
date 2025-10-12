@@ -1,21 +1,32 @@
 <template>
   <VCard>
-    <VCardContent>
-      <ClientOnly>
-        <VSpinner v-if="isLoading" />
-      </ClientOnly>
+    <ClientOnly>
       <div
-        v-if="!isLoading && !contents.length"
-        class="text-xl text-center my-8 w-full"
+        v-if="isLoading"
+        class="min-h-48"
       >
-        No records found.
+        <VSpinner />
       </div>
-      <div
-        v-for="item in contents"
-        class="pt-1 text-sm mb-4"
-        v-html="md.render(item.text)"
-      />
+    </ClientOnly>
+    <VCardContent v-if="!isLoading && !Object.keys(contents).length">
+      <div class="text-xl text-center my-8 w-full">No records found.</div>
     </VCardContent>
+    <template
+      v-for="(content, key) in contents"
+      :key="key"
+    >
+      <VCardHeader class="border-t border-base-muted first:border-t-0">
+        {{ content.topic.name }}
+      </VCardHeader>
+      <VCardContent class="panel-content-list">
+        <div
+          v-for="(item, index) in content.list"
+          :key="index"
+          class="pt-1 text-sm"
+          v-html="item.text"
+        ></div>
+      </VCardContent>
+    </template>
   </VCard>
 </template>
 
@@ -31,35 +42,65 @@ const props = defineProps({
   },
 
   topic_id: {
-    type: Number,
+    type: [Array, Number],
     default: undefined
   }
 })
 
 const md = markdownit()
 const contents = ref([])
+const isLoading = ref(false)
 const controller = new AbortController()
 
 md.renderer.rules.link_open = () => ''
 md.renderer.rules.link_close = () => ''
 
-onBeforeMount(() => {
-  makeAPIRequest
-    .get('/contents', {
+onBeforeMount(async () => {
+  try {
+    isLoading.value = true
+
+    const { data: topics } = await makeAPIRequest.get(
+      '/controlled_vocabulary_terms',
+      {
+        params: {
+          type: 'Topic'
+        }
+      }
+    )
+
+    const { data } = await makeAPIRequest.get('/contents', {
       params: {
         otu_id: [props.otuId],
-        topic_id: props.topic_id,
+        topic_id: [props.topic_id].flat(),
         extend: ['depiction']
       },
       signal: controller.signal
     })
-    .then(({ data }) => {
-      contents.value = data
-    })
-    .catch(() => {})
+
+    contents.value = data.reduce((acc, current) => {
+      const topic = topics.find((t) => t.id == current.topic_id)
+
+      if (acc[topic.id]) {
+        acc[topic.id].list.push(current)
+      } else {
+        acc[topic.id] = {
+          topic: {
+            id: topic.id,
+            name: topic.name,
+            definition: topic.definition
+          },
+          list: [current]
+        }
+      }
+
+      return acc
+    }, {})
+  } catch {}
+
+  isLoading.value = false
 })
 
 onBeforeUnmount(() => {
-  controller.abort()
+  controller?.abort()
 })
 </script>
