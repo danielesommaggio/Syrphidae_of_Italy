@@ -19,7 +19,7 @@ taxa_page:
     panels:
       - - - id: panel:biology
             bind:
-              topic_id: ["6422", "6423", "6424"]
+              topic_id:
   specimen_records:
     rank_group: ['SpeciesGroup']
     panels:
