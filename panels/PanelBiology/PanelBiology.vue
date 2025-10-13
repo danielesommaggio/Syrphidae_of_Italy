@@ -9,25 +9,35 @@
     No records found.
   </div>
 
-  <div v-if="!isLoading">
-    <template
-      v-for="(content, key) in sortedContents"
-      :key="key"
-    >
-      <VCard class="mb-4">
-        <VCardHeader class="border-b border-base-muted">
-          {{ content.topic.name }}
-        </VCardHeader>
+  <div v-if="!isLoading" class="space-y-10">
+    <template v-for="(group, groupName) in groupedContents" :key="groupName">
+      <!-- Group title -->
+      <h2 class="text-2xl font-bold mb-4">{{ groupName }}</h2>
 
-        <VCardContent class="panel-content-list">
-          <div
-            v-for="(item, index) in content.list"
-            :key="index"
-            class="pt-1 text-sm"
-            v-html="item.text"
-          ></div>
-        </VCardContent>
-      </VCard>
+      <!-- Grid of cards, single column for Habitat, 2-3 columns for others -->
+      <div
+        :class="[
+          'grid gap-4',
+          groupName === 'Habitat' ? 'grid-cols-1' : 'grid md:grid-cols-2 lg:grid-cols-3'
+        ]"
+      >
+        <template v-for="content in group" :key="content.topic.id">
+          <VCard class="h-full flex flex-col">
+            <VCardHeader class="border-b border-base-muted">
+              {{ content.topic.name }}
+            </VCardHeader>
+
+            <VCardContent class="panel-content-list flex-grow">
+              <div
+                v-for="(item, index) in content.list"
+                :key="index"
+                class="pt-1 text-sm"
+                v-html="item.text"
+              ></div>
+            </VCardContent>
+          </VCard>
+        </template>
+      </div>
     </template>
   </div>
 </template>
@@ -56,12 +66,42 @@ const controller = new AbortController()
 md.renderer.rules.link_open = () => ''
 md.renderer.rules.link_close = () => ''
 
-// ✅ Computed property to sort topics alphabetically by name
+// ✅ Define topic groups
+const topicGroups = {
+  Habitat: [6429],
+  Adult: [6424, 6423, 6431, 6432, 6433, 6434, 6435, 6436, 6437, 6438, 6439],
+  Larva: [6422, 6430, 6435]
+}
+
+// ✅ Flatten topic IDs for sorting
+const topicOrder = [
+  ...topicGroups.Habitat,
+  ...topicGroups['Adult'],
+  ...topicGroups.Larva
+]
+
+// ✅ Sort contents based on topicOrder
 const sortedContents = computed(() =>
-  Object.values(contents.value).sort((a, b) =>
-    a.topic.name.localeCompare(b.topic.name)
-  )
+  Object.values(contents.value).sort((a, b) => {
+    const indexA = topicOrder.indexOf(a.topic.id)
+    const indexB = topicOrder.indexOf(b.topic.id)
+
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB
+    if (indexA !== -1) return -1
+    if (indexB !== -1) return 1
+
+    return a.topic.id - b.topic.id
+  })
 )
+
+// ✅ Group sorted contents by topicGroups for rendering
+const groupedContents = computed(() => {
+  const groups = {}
+  for (const [groupName, ids] of Object.entries(topicGroups)) {
+    groups[groupName] = sortedContents.value.filter(c => ids.includes(c.topic.id))
+  }
+  return groups
+})
 
 onBeforeMount(async () => {
   try {
