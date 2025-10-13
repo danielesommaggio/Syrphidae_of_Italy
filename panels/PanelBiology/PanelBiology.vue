@@ -17,7 +17,7 @@
       <!-- Grid of cards, single column for Habitat, 2-3 columns for others -->
       <div
         :class="[
-          'grid gap-4',
+          'grid gap-3',
           groupName === 'Habitat' ? 'grid-cols-1' : 'grid md:grid-cols-2 lg:grid-cols-3'
         ]"
       >
@@ -69,8 +69,8 @@ md.renderer.rules.link_close = () => ''
 // ✅ Define topic groups
 const topicGroups = {
   Habitat: [6429],
-  Adult: [6424, 6423, 6431, 6432, 6433, 6434, 6435, 6436, 6437, 6438, 6439],
-  Larva: [6422, 6430, 6435]
+  Adult: [6424, 6423, 6432, 6433, 6436, 6438, 6434, 6435, 6439, 6431, 6437],
+  Larva: [6422, 6430]
 }
 
 // ✅ Flatten topic IDs for sorting
