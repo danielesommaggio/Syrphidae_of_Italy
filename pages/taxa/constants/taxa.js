@@ -185,7 +185,7 @@ export default [
 },
 {
     taxonName: 'Episyrphus',
-    author: 'Matsumura & Adachi, 1917',
+    author: 'Matsumura, 1917',
     url: '/otus/985428/overview',
     keyUrl: '',
     keyUrlEN: '',
