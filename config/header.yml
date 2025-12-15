@@ -8,12 +8,18 @@
     - label: About
       link: /about
     
-    - label: News
+    - label: Addition
       submenu:
-        - label: New Taxa
+        - label: Taxa Addition
           link: /newtaxa
-        - label: New References
+        - label: Reference Addition
           link: /newreferences
+
+    - label: Bibliography
+      link: /resources/tw/filter/bibliography
+
+    - label: Search DwC
+      link: /resources/tw/filter/dwc_otus
     
     - label: Taxa
       link: /taxa
