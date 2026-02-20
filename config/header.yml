@@ -23,3 +23,6 @@
     
     - label: Taxa
       link: /taxa
+
+    - label: News
+      link: /news
