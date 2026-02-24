@@ -2,7 +2,7 @@
     taxonName: 'Didea',
     author: 'Macquart, 1834',
     url: '/otus/950498/overview',
-    keyUrl: '',
+    keyUrl: '/keys/938',
     keyUrlEN: '',
     numSpecies: '8',
     numSpeciesIta: '3',
