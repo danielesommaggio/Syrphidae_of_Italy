@@ -41,7 +41,7 @@
                   <VTableBodyCell>
                     <RouterLink
                       :to="{ name: 'taxa-name', params: { name: item.taxonName } }"
-                      class="font-semibold text-sm text-yellow-500 hover:text-red-600 transition-colors"
+                      class="font-semibold text-sm text-[#f79e87] hover:text-[#f46f4f] transition-colors"
                     >
                       <span class="italic" v-html="item.taxonName"></span>
                     </RouterLink>

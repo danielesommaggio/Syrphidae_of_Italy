@@ -2,7 +2,7 @@
   <div class="max-w-screen-xl mx-auto font-serif px-4 sm:px-6 lg:px-8">
     <!-- Header -->
     <div class="py-5 border-b border-gray-300 flex items-center justify-between">
-      <h2 class="text-2xl sm:text-3xl font-bold">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">
         <i>{{ profile.taxonName }}</i>
         <span class="text-base sm:text-lg font-normal text-gray-600 ml-2">
           {{ profile.author }}
@@ -13,7 +13,7 @@
         <!-- Single Key to Species Button -->
         <button
           @click="isModalOpen = true"
-          class="inline-flex items-center gap-2 px-4 py-2 font-serif rounded-full shadow-md bg-red-600 text-white hover:bg-red-400 transition-colors duration-300"
+          class="inline-flex items-center gap-2 px-4 py-2 font-serif rounded-lg shadow-md bg-violet-400 text-white hover:bg-violet-500 transition-colors duration-300"
         >
           <span class="text-base">Key to Species</span>
         </button>
@@ -22,12 +22,19 @@
         <RouterLink
           v-if="profile.url"
           :to="profile.url"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-orange-400 text-white font-serif rounded-full shadow-md hover:bg-orange-300 transition-colors duration-300"
+          class="inline-flex items-center gap-2 px-4 py-2 bg-orange-400/90 text-white font-serif rounded-lg shadow-md hover:bg-orange-500 transition-colors duration-300"
         >
           <span class="text-base">Explore SoI Data</span>
         </RouterLink>
       </div>
     </div>
+
+<ProfileStats
+  :numSpecies="profile.numSpecies"
+  :numSpeciesIta="profile.numSpeciesIta"
+  :distribution="profile.distribution"
+  :distributionClassMap="distributionClassMap"
+/>
 
     <!-- Sections -->
     <template v-for="(title, key) in SECTIONS">
@@ -108,7 +115,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
+import ProfileStats from './ProfileStats.vue';
 
 const SECTIONS = {
   introduction: 'General',
@@ -118,6 +126,15 @@ const SECTIONS = {
   biodiversity: 'Biodiversity and distribution',
   italianBiodiversity: 'Italian Biodiversity',
   references: 'References'
+}
+
+const distributionClassMap = {
+  Palearctic: 'bg-[#f2d6d6] text-[#8f3f3f]',
+  Nearctic: 'bg-[#e8efd1] text-[#5f6f2f]',
+  Indomalayan: 'bg-[#f2e3cc] text-[#8b6a3e]',
+  Afrotropical: 'bg-[#dde6f0] text-[#4e637f]',
+  Australasian: 'bg-[#f6e2cc] text-[#9a5f24]',
+  Neotropical: 'bg-[#ece5f0] text-[#715c74]'
 }
 
 const props = defineProps({
