@@ -6,7 +6,7 @@
     keyUrlEN: '',
     numSpecies: '19',
     numSpeciesIta: '1',
-    distribution: ['Afrotropical', 'Oriental', 'Palearctic'],
+    distribution: ['Afrotropical', 'Indomalayan', 'Palearctic'],
     introduction: `<p>Egger (1860) introduced the genus <i>Eriozona</i> to include the species <i>Syrphus oestriformis</i> Meigen, 1822, later regarded as junior synonym of Scaeva<i> syrphoides</i> Fallén, 1816. Subsequent authors accepted <i>Eriozona</i> as a valid genus (e.g. Verrall, 1901; Bezzi and Stein, 1907; Sack, 1930). The genus was considered the sister clade of <i>Megasyrphus</i> Duśek & Láska, 1967 by Duśek & Láska (1967) and Vockeroth (1969).  More recent analyses based on larval morphology (Rotheray & Gilbert, 1989) and molecular data (Mengual et al., 2008, 2023) have confirmed this relationship, identifying a well defined clade composed of (Eriozona + (Megasyrphus + Didea)) within the tribe Syrphini.</p>`,
     diagnosis: `The genus <i>Eriozona</i> includes large, hairy, bumblebee mimicking Syrphinae. The presence of long hairs with contrasting colours makes the species of this genus easy to distinguish. The wing bears a distinct dark spot, a feature shared within the European fauna only with species of the subgenus <i>Leucozona</i> (<i>Leucozona</i>). However, in the latter the second tergite shows whitish markings, which are absent in <i>Eriozona</i> (its colour pattern is produced solely by differently coloured hairs). Although phylogenetically close to the genus <i>Megasyrphus</i>, the two genera are difficult to confuse: <i>Megasyrphus</i> species have a characteristic yellow and black abdominal pattern, whereas the abdomen of <i>Eriozona</i> is entirely black.`,
     description: `

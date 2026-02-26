@@ -15,7 +15,7 @@
       <li><span class="font-medium">Authorship</span> — the author who described the genus.</li>
       <li><span class="font-medium">Global species richness</span> — total number of species worldwide.</li>
       <li><span class="font-medium">Species recorded in Italy</span> — local richness for Italian fauna.</li>
-      <li><span class="font-medium">Biogeographic distribution</span> — major realms (Palearctic, Oriental, Afrotropical, etc.).</li>
+      <li><span class="font-medium">Biogeographic distribution</span> — major realms (Palearctic, Indomalayan, Afrotropical, etc.).</li>
       <li><span class="font-medium">Identification keys</span> — available in English (EN) and Italian (IT).</li>
     </ul>
 

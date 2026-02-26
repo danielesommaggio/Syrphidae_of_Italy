@@ -6,7 +6,7 @@
     keyUrlEN: '',
     numSpecies: '8',
     numSpeciesIta: '3',
-    distribution: ['Palearctic', 'Oriental'],
+    distribution: ['Palearctic', 'Indomalayan'],
     introduction: `Macquart (1834) introduced the genus <i>Didea</i> for the new species <i>Didea fasciata</i> Macquart 1834. Few years later Meigen (1838) described the genus <i>Enica</i> for the new species <i>Enica foesteri</i> Meigen, 1838 now considered as synonym of <i>Didea</i>. The genus <i>Didea</i> is well characterized, and it has been accepted by following authors (e.g. Rondani, 1857; Verrall, 1901; Bezzi and Stein, 1907). Recent phylogenetic studies based on molecular data confirmed the validity of the genus <i>Didea</i>, with a well-supported clade between: <i>Eriozona</i> Schiner, 1860 + (<i>Didea</i> Macquart, 1838 + <i>Megasyrphus</i> Dušsek & Laska, 1967) (Mengual et al., 2015, 2023). `,
     diagnosis: `Within Syrphinae, <i>Didea</i> species can be readily separated from all other genera by the loop in vein R4+5; in addition the abdomen is large and flattened with yellow or white spots and evident lateral margin.`,
     description: `
@@ -21,7 +21,7 @@
       <p>In males, the epandrium is trapezoidal, with the hypandrium ventrally convex. The surstyli are broad and apically truncated in <I>D</I>. <i>fasciata</i>; whereas in the other species the sustylus have a distinct dorsal  notch. The cerci are oval and bear long hairs. The postgonite is very large in <I>D</I>. <i>fasciata</i>, small in the other species. The distiphallus is very large and sclerotized in <I>D</I>. <i>fasciata</i>; in the other species, it is short, thick and heavily sclerotized.</p>    
     `,
     biology: `The larvae of the genus are zoophagous. They have been recorded only feeding on aphids associated with trees, both conifers (e.g. <i>Larix</i>, <i>Pinus</i>) and deciduous species (<i>Salix</i>, <i>Prunus</i>, <i>Quercus</i>). All species overwinter in the larval stage. Adults are typically found in woodland habitats. The species are univoltine or bivoltine and are non-migratory or weakly migratory.`,
-    biodiversity: `<i>Didea</i> is a small genus including only eight species currently considered valid (Evenhuis and Pape, 2025). Five species are known from Holoarctic region, three from India. The genus is absent from the rest of the Oriental, Neotropical and Afrotropical regions. Three species are known Europe (Reverté et al., 2023).`,
+    biodiversity: `<i>Didea</i> is a small genus including only eight species currently considered valid (Evenhuis and Pape, 2025). Five species are known from Holoarctic region, three from India. The genus is absent from the rest of the Indomalayan, Neotropical and Afrotropical regions. Three species are known Europe (Reverté et al., 2023).`,
     italianBiodiversity: `All European species have been recorded in Italy. <i>Didea fasciata</i> is the only species recorded throughout the country, including Sardinia and Sicily. The other two species are restricted to mountainous areas in Northern and Central Italy. For species-level identification, European keys can be used.`,
     references: [
   "Bezzi, M., Stein P. (1907). Cyclorrapha Aschiza. Cyclorrapha Schizophora: Schizometopa. In: Becker, T., Bezzi, M., Kertész, K., Stein, P. (eds.): Katalog der palaarktischen Dipteren, Vol. 3. Budapest. Pp. 1-188.",

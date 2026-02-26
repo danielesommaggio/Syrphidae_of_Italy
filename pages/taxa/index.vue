@@ -140,13 +140,25 @@
         <p class="text-sm text-gray-600">
           Abbreviation for the {{ regionMap[modalRegion]?.full || modalRegion }} biogeographic realm.
         </p>
+        <div v-if="regionImages[modalRegion]" class="mt-4">
+  <img
+    :src="regionImages[modalRegion].src"
+    :alt="modalRegion"
+    class="w-full rounded-lg border border-gray-200"
+  />
+
+  <p
+    class="text-[10px] text-gray-500 mt-2 leading-snug"
+    v-html="regionImages[modalRegion].attribution"
+  />
+</div>
       </div>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 import TaxaTableIntro from './TaxaTableIntro.vue';
 import taxaListRaw from '/pages/taxa/constants/taxa.js';
 
@@ -173,20 +185,64 @@ const regionMap = {
   Nearctic: { abbr: 'Nea', full: 'Nearctic' },
   Neotropical: { abbr: 'Neo', full: 'Neotropical' },
   Afrotropical: { abbr: 'Afr', full: 'Afrotropical' },
-  Oriental: { abbr: 'Ori', full: 'Oriental' },
+  Indomalayan: { abbr: 'Ind', full: 'Indomalayan' },
   Australasian: { abbr: 'Aus', full: 'Australasian' },
   Cosmopolitan: { abbr: 'Cos', full: 'Cosmopolitan' }
 };
 
 // Pastel colors with hover
 const distributionClassMap = {
-  Palearctic: 'bg-green-100 text-green-800 hover:bg-green-200',
-  Nearctic: 'bg-blue-100 text-blue-800 hover:bg-blue-200',
-  Neotropical: 'bg-pink-100 text-pink-800 hover:bg-pink-200',
-  Afrotropical: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200',
-  Oriental: 'bg-orange-100 text-orange-800 hover:bg-orange-200',
-  Australasian: 'bg-purple-100 text-purple-800 hover:bg-purple-200',
+  Palearctic: 'bg-[#f2d6d6] text-[#8f3f3f] hover:bg-[#e8c2c2]',
+  Nearctic: 'bg-[#e8efd1] text-[#5f6f2f] hover:bg-[#dde8b8] hover:bg-blue-200',
+  Neotropical: 'bg-[#ece5f0] text-[#715c74] hover:bg-[#e2d9e8]',
+  Afrotropical: 'bg-[#dde6f0] text-[#4e637f] hover:bg-[#cfdceb]',
+  Indomalayan: 'bg-[#f2e3cc] text-[#8b6a3e] hover:bg-orange-200',
+  Australasian: 'bg-[#f6e2cc] text-[#9a5f24] hover:bg-[#edd1b3]',
   Cosmopolitan: 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+};
+
+const regionImages = {
+  Indomalayan: {
+    src: '/images/regions/indomalayan.png', // <-- your image path
+    attribution: `
+      By carol - Ecozones and Image:BlankMap-World6, compact.svg by User:Lokal_Profil, 
+      CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=3704075`
+  },
+  Nearctic: {
+    src:'/images/regions/nearctic.png',
+    attribution: `
+      By carol - Ecozones and Image:BlankMap-World6, compact.svg by User:Lokal_Profil, 
+      CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=3704039`
+
+  },
+    Palearctic: {
+    src:'/images/regions/palearctic.png',
+    attribution: `
+      By carol - Ecozones and Image:BlankMap-World6, compact.svg by User:Lokal_Profil, 
+      CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=3704127`
+
+  },
+    Afrotropical: {
+    src:'/images/regions/afrotropical.png',
+    attribution: `
+      By carol - Ecozones and Image:BlankMap-World6, compact.svg by User:Lokal_Profil, 
+      CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=3698068`
+
+  },
+    Australasian: {
+    src:'/images/regions/australasian.png',
+    attribution: `
+      By carol - Ecozones and Image:BlankMap-World6, compact.svg by User:Lokal_Profil, 
+      CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=3698073`
+
+  },
+    Neotropical: {
+    src:'/images/regions/neotropical.png',
+    attribution: `
+      By carol - Ecozones and Image:BlankMap-World6, compact.svg by User:Lokal_Profil, 
+      CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=3704119`
+
+  }
 };
 
 // Sort regions alphabetically
