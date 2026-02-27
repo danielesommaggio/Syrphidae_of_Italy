@@ -1,41 +1,42 @@
-  const Doros = {
-    taxonName: 'Doros',
-    author: 'Meigen, 1803',
-    url: '/otus/950502/overview',
-    keyUrl: '/keys/2818',
-    keyUrlEN: '/keys/2821',
-    numSpecies: '4',
-    numSpeciesIta: '2',
-    distribution: ['Nearctic', 'Palearctic'],
-    introduction: `The genus Doros was established by Meigen (1803) including two species: <i>Syrphus conopseus</i> Linnaeus, 1758 sensu Fabricius, 1775 and <i>Syrphus coarctatus</i> Panzer, 1797, both currently considered synonyms of <i>Musca profuges</i> Harris, 1776. The genus <i>Doros</i> is well-defined, and has been accepted by subsequent authors (e.g. Rondani, 1857; Schiner, 1857; Verrall, 1901; Bezzi and Stein, 1907). With the exception of Sack (1930) which placed <i>Doros</i> in the Bacchinae due to its petiolate abdomen, the genus has consistently been associated with the tribe Syrphini (e.g. Vockeroth, 1969; Peck, 1988). Morphology of adults and larvae suggested a similarity between <i>Doros</i> and <i>Xanthogramma</i> (Duśek & Láska, 1967; Rotheray & Gilbert, 1999). Recent phylogenetic studies based on molecular data have confirmed a sister-group relationship between <i>Doros</i> and <i>Xanthogramma</i> (Mengual et al., 2018).`,
-    diagnosis: `Within Syrphinae, <i>Doros</i> species can be readily separated from all other genera by the petiolate abdomen and the brown markings on the anterior part of the wing.`,
-    description: `
+const Doros = {
+  otuId: 950502,
+  taxonName: 'Doros',
+  author: 'Meigen, 1803',
+  url: '/otus/950502/overview',
+  keyUrl: '/keys/2818',
+  keyUrlEN: '/keys/2821',
+  numSpecies: '4',
+  numSpeciesIta: '2',
+  distribution: ['Nearctic', 'Palearctic'],
+  introduction: `The genus Doros was established by Meigen (1803) including two species: <i>Syrphus conopseus</i> Linnaeus, 1758 sensu Fabricius, 1775 and <i>Syrphus coarctatus</i> Panzer, 1797, both currently considered synonyms of <i>Musca profuges</i> Harris, 1776. The genus <i>Doros</i> is well-defined, and has been accepted by subsequent authors (e.g. Rondani, 1857; Schiner, 1857; Verrall, 1901; Bezzi and Stein, 1907). With the exception of Sack (1930) which placed <i>Doros</i> in the Bacchinae due to its petiolate abdomen, the genus has consistently been associated with the tribe Syrphini (e.g. Vockeroth, 1969; Peck, 1988). Morphology of adults and larvae suggested a similarity between <i>Doros</i> and <i>Xanthogramma</i> (Duśek & Láska, 1967; Rotheray & Gilbert, 1999). Recent phylogenetic studies based on molecular data have confirmed a sister-group relationship between <i>Doros</i> and <i>Xanthogramma</i> (Mengual et al., 2018).`,
+  diagnosis: `Within Syrphinae, <i>Doros</i> species can be readily separated from all other genera by the petiolate abdomen and the brown markings on the anterior part of the wing.`,
+  description: `
 <p>The face is completely yellow in <I>D</I>. <i>destillatorius</i>, or yellow with a central black stripe extending from the base of the antennae to the oral margin in <I>D</I>. <i>profuges</i>. The oral margin is black. The eyes are bare. Males are holoptic, females dichoptic. The frons is yellow, with a black central stripe, enlarging towards the antennae. The vertex is black. No tomentose markings is present on frons. The antennae are black or brown. The basoflagellomere is circular or little longer than larger.</p> 
 <p>The scutum is black and shiny, with lateral yellow vittae along the entire scutum; two yellow or reddish spots may be present on the posterior margin of the scutum. The hairs on the scutum are short, adpressed, and either yellow or a mix of yellow and black. The scutellum is yellow, bearing black spots only on the anterolateral angles. Its hairs are short and yellow; few longer yellow hairs are present on the posterior half in males. The pleura are black, with a yellow spot on the dorsal part of the katepisternum. Pleural hairs are yellow - short in females and long in males. The hairs on the katepisternum are widely separated in the central part. The metasternum is bare.</p>
 <p>The legs are simple and predominantly yellow. The front and middle femora are black at the base, with the dark coloration more extended on the posterior half. The hind femora are mostly black, with the base and knees yellow. The last tarsomeres of the front and middle legs, as well as all tarsomeres of the hind legs are, dorsally black. Leg hairs are short and yellow, long only on the posterior half of the front and middle femora. The wings are dark brown in the anterior half and hyaline in posterior portion. They are almost entirely covered with microtrichia, except for bare areas present on cells bm and br. The halteres are black with the yellow apices.</p>
 <p>The abdomen is petiolate, with the second tergite approximately three times longer than wide and lacking a defined margin. The abdomen is black with yellow markings on tergites 2–5. These markings are most prominent on the second tergite, where the yellow spots extend from the anterior margin almost to the posterior edge. On the remaining tergites, the yellow spots are restricted to the anterior margin, except on the fourth tergite, which also bears a triangular yellow spot on the posterior margin. The sternites are black, except the second one which is yellow with the posterior margin of the first sternite and the anterior margins of the third and fourth sternites are yellow. Abdominal hairs are short and mostly black.</p> 
 <p>In males, the epandrium is trapezoidal, with the hypandrium rounded ventrally. The surstyli are short and  broad. The cerci are oval and bear long hairs. The postgonite is short, semicircular with a posterodorsal hook. The distiphallus is slender, slightly swollen ventrally.</p> 
 `,
-    biology: `The larvae are zoophagous, probably associated with aphids tended by ants of the genus <i>Lasius</i>. Adults are typically found in deciduous woods (<i>Fagus</i>, <i>Quercus</i>, <i>Fraxinus</i>), usually with overmature trees. All species overwinter in the larval stage. They are univoltine and non-migratory.`,
-    biodiversity: `<i>Didea</i> is a small genus comprising only four valid species (Evenhuis and Pape, 2025). The genus has a Holoarctic distribution, with three species occurring in the Palaearctic region and one in the Nearctic. Two species are known to be present in Europe (Reverté et al., 2023). There has been considerable nomenclatural confusion regarding the European species of <i>Doros</i>. Several authors have treated <i>D. destillatorius</i> as a synonym of <i>D. conopseus sensu </i>Fabricius, effectively reducing the genus to a single species in Europe (e.g. Peck, 1988). Thompson et al. (1982) reinstated <i>D. profuges</i> as a valid species in place of <i>D. conopseus</i> sensu Fabricius, while Speight (1988) clarified the distinctions between <i>D. profuges</i> and <i>D. destillatorius</i>.`,
-    italianBiodiversity: `All European species have been recorded in Italy. This is an uncommon species, and only a few records are available for the country; these are scattered across the Italian mainland. <i>Doros destillatorius</i> has also been recorded from Sardinia.`,
-    references: [
-"Bezzi, M., Stein P. (1907). Cyclorrapha Aschiza. Cyclorrapha Schizophora: Schizometopa. In: Becker, T., Bezzi, M., Kertész, K., Stein, P. (eds.): Katalog der palaarktischen Dipteren, Vol. 3. Budapest. Pp. 1-188.",
-"Duśek, J., Láska, P. (1967). Versuch zum Aufbau eines naturlichen Systems mitteleuropäische r Arten der Unterfamilie Syrphinae (Diptera). Acta Sci. Nat. Brno 1: 349-390.",
-"Evenhuis, N.L., Pape, T. (2025). Systema Dipterorum, Version 6.2. <a href=\"http://diptera.org/\" target=\"_blank\">http://diptera.org/</a> [accessed on 25.08.2025]",
-"Meigen, J.W. (1803): Versuch einer neuen Gattungs-Eintheilung der europäischen zweiflügligen Insekten. Magazin für Insektenkunde 2: 259-281.",
-"Mengual, X., Ståhls, G., Láska, P., Mazánek, L., Rojo, S. (2018). Molecular phylogenetics of the predatory lineage of flower flies Eupeodes–Scaeva (Diptera: Syrphidae), with the description of the Neotropical genus Austroscaeva gen. nov. Journal of Zoological Systematics and Evolutionary Research, 56(2), 148–169. <a href=\"https://doi.org/10.1111/jzs.12212\" target=\"_blank\">https://doi.org/10.1111/jzs.12212</a>",
-"Peck, L.V. (1988) Family Syrphidae. In: Soós, Á. & Papp, L. (eds.), Catalogue of the Diptera of the Palaearctic Region 8: 11-230.",
-"Reverté, S., Miličić, M., Ačanski, J., Andrić, A., Aracil, A., Aubert, M., Balzan, M.V., Bartomeus, I., Bogusch, P., et al. (2023). National records of 3000 European bee and hoverfly species: A contribution to pollinator conservation. Insect Conservation and Diversity, 16: 758-775.",
-"Rondani, C. (1857). Dipterologiae italicae prodromus. Vol: II. Species italicae ordinis dipterorum in genera characteribus definita, ordinatim collectae, methodo analitica distinctae, et novis vel minus cognitis descriptis. Pars prima. Oestridae: Syrpfhidae: Conopidae. A. Stocchi, Parmae, 264 pp.",
-"Rotheray, G.E., Gilbert, F. (1999). Phylogeny of Palaearctic Syrphidae (Diptera): evidence from larval stages. Zoological Journal of the Linnean Society, 127(1), 1–112. <a href=\"https://doi.org/10.1111/j.1096-3642.1999.tb01305.x\" target=\"_blank\">https://doi.org/10.1111/j.1096-3642.1999.tb01305.x</a>",
-"Sack, P. (1930). 31. Syrphidae [part]. In: Lindner, E. (ed.): Die Fliegen der Palaearktischen Region 4(6): 177-240",
-"Schiner, I.R. (1863). Fauna Austriaca. \"1864\" Theil II. Heft 11/12: 289-480.",
-"Speight, M.C.D. (1988). <i>Doros destillatorius</i>, espèece nouvelle pour la France, avec désignation des types des deux espèces européennes du genre <i>Doros</i>, description de leurs pupes et clès de détermination des adultes et des pupes. Bulletin de la Société entomologique de France,<i> </i>92(5-6): 193- 200.",
-"Thompson, F.C., Vockeroth, J.R., Speight, M.C.D., 1982. The Linnaean species of flower flies (Diptera: Syrphidae). Memoirs of the Entomological Society of Washington 10: 150-165",
-"Verrall, G.H. (1901). British flies. Vol. VIII, Platypezidae, Pipunculidae and Syrphidae of Great Britain. Gurney & Jackson, London, 691 pp.",
-"Vockeroth, J.R., (1969). A revision of the genera of the Syrphini (Diptera: Syrphidae). The Memoirs of the Entomological Society of Canada 62: 1-176."
-]
-};
+  biology: `The larvae are zoophagous, probably associated with aphids tended by ants of the genus <i>Lasius</i>. Adults are typically found in deciduous woods (<i>Fagus</i>, <i>Quercus</i>, <i>Fraxinus</i>), usually with overmature trees. All species overwinter in the larval stage. They are univoltine and non-migratory.`,
+  biodiversity: `<i>Didea</i> is a small genus comprising only four valid species (Evenhuis and Pape, 2025). The genus has a Holoarctic distribution, with three species occurring in the Palaearctic region and one in the Nearctic. Two species are known to be present in Europe (Reverté et al., 2023). There has been considerable nomenclatural confusion regarding the European species of <i>Doros</i>. Several authors have treated <i>D. destillatorius</i> as a synonym of <i>D. conopseus sensu </i>Fabricius, effectively reducing the genus to a single species in Europe (e.g. Peck, 1988). Thompson et al. (1982) reinstated <i>D. profuges</i> as a valid species in place of <i>D. conopseus</i> sensu Fabricius, while Speight (1988) clarified the distinctions between <i>D. profuges</i> and <i>D. destillatorius</i>.`,
+  italianBiodiversity: `All European species have been recorded in Italy. This is an uncommon species, and only a few records are available for the country; these are scattered across the Italian mainland. <i>Doros destillatorius</i> has also been recorded from Sardinia.`,
+  references: [
+    'Bezzi, M., Stein P. (1907). Cyclorrapha Aschiza. Cyclorrapha Schizophora: Schizometopa. In: Becker, T., Bezzi, M., Kertész, K., Stein, P. (eds.): Katalog der palaarktischen Dipteren, Vol. 3. Budapest. Pp. 1-188.',
+    'Duśek, J., Láska, P. (1967). Versuch zum Aufbau eines naturlichen Systems mitteleuropäische r Arten der Unterfamilie Syrphinae (Diptera). Acta Sci. Nat. Brno 1: 349-390.',
+    'Evenhuis, N.L., Pape, T. (2025). Systema Dipterorum, Version 6.2. <a href="http://diptera.org/" target="_blank">http://diptera.org/</a> [accessed on 25.08.2025]',
+    'Meigen, J.W. (1803): Versuch einer neuen Gattungs-Eintheilung der europäischen zweiflügligen Insekten. Magazin für Insektenkunde 2: 259-281.',
+    'Mengual, X., Ståhls, G., Láska, P., Mazánek, L., Rojo, S. (2018). Molecular phylogenetics of the predatory lineage of flower flies Eupeodes–Scaeva (Diptera: Syrphidae), with the description of the Neotropical genus Austroscaeva gen. nov. Journal of Zoological Systematics and Evolutionary Research, 56(2), 148–169. <a href="https://doi.org/10.1111/jzs.12212" target="_blank">https://doi.org/10.1111/jzs.12212</a>',
+    'Peck, L.V. (1988) Family Syrphidae. In: Soós, Á. & Papp, L. (eds.), Catalogue of the Diptera of the Palaearctic Region 8: 11-230.',
+    'Reverté, S., Miličić, M., Ačanski, J., Andrić, A., Aracil, A., Aubert, M., Balzan, M.V., Bartomeus, I., Bogusch, P., et al. (2023). National records of 3000 European bee and hoverfly species: A contribution to pollinator conservation. Insect Conservation and Diversity, 16: 758-775.',
+    'Rondani, C. (1857). Dipterologiae italicae prodromus. Vol: II. Species italicae ordinis dipterorum in genera characteribus definita, ordinatim collectae, methodo analitica distinctae, et novis vel minus cognitis descriptis. Pars prima. Oestridae: Syrpfhidae: Conopidae. A. Stocchi, Parmae, 264 pp.',
+    'Rotheray, G.E., Gilbert, F. (1999). Phylogeny of Palaearctic Syrphidae (Diptera): evidence from larval stages. Zoological Journal of the Linnean Society, 127(1), 1–112. <a href="https://doi.org/10.1111/j.1096-3642.1999.tb01305.x" target="_blank">https://doi.org/10.1111/j.1096-3642.1999.tb01305.x</a>',
+    'Sack, P. (1930). 31. Syrphidae [part]. In: Lindner, E. (ed.): Die Fliegen der Palaearktischen Region 4(6): 177-240',
+    'Schiner, I.R. (1863). Fauna Austriaca. "1864" Theil II. Heft 11/12: 289-480.',
+    'Speight, M.C.D. (1988). <i>Doros destillatorius</i>, espèece nouvelle pour la France, avec désignation des types des deux espèces européennes du genre <i>Doros</i>, description de leurs pupes et clès de détermination des adultes et des pupes. Bulletin de la Société entomologique de France,<i> </i>92(5-6): 193- 200.',
+    'Thompson, F.C., Vockeroth, J.R., Speight, M.C.D., 1982. The Linnaean species of flower flies (Diptera: Syrphidae). Memoirs of the Entomological Society of Washington 10: 150-165',
+    'Verrall, G.H. (1901). British flies. Vol. VIII, Platypezidae, Pipunculidae and Syrphidae of Great Britain. Gurney & Jackson, London, 691 pp.',
+    'Vockeroth, J.R., (1969). A revision of the genera of the Syrphini (Diptera: Syrphidae). The Memoirs of the Entomological Society of Canada 62: 1-176.'
+  ]
+}
 
-export default Doros;
+export default Doros

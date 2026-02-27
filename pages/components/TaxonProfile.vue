@@ -1,7 +1,9 @@
 <template>
   <div class="max-w-screen-xl mx-auto font-serif px-4 sm:px-6 lg:px-8">
     <!-- Header -->
-    <div class="py-5 border-b border-gray-300 flex items-center justify-between">
+    <div
+      class="py-5 border-b border-gray-300 flex items-center justify-between"
+    >
       <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">
         <i>{{ profile.taxonName }}</i>
         <span class="text-base sm:text-lg font-normal text-gray-600 ml-2">
@@ -29,12 +31,13 @@
       </div>
     </div>
 
-<ProfileStats
-  :numSpecies="profile.numSpecies"
-  :numSpeciesIta="profile.numSpeciesIta"
-  :distribution="profile.distribution"
-  :distributionClassMap="distributionClassMap"
-/>
+    <ProfileStats
+      :numSpecies="profile.numSpecies"
+      :numSpeciesIta="profile.numSpeciesIta"
+      :distribution="profile.distribution"
+      :distributionClassMap="distributionClassMap"
+      :otu-id="profile.otuId"
+    />
 
     <!-- Sections -->
     <template v-for="(title, key) in SECTIONS">
@@ -53,15 +56,17 @@
           class="prose max-w-none"
         />
 
-        <div v-else class="space-y-2">
-<p
-  v-for="(ref, i) in profile.references"
-  :key="i"
-  class="text-sm text-gray-800 leading-snug pl-6 text-justify"
-  style="text-indent: -1.5rem;"
-  v-html="ref"
-></p>
-
+        <div
+          v-else
+          class="space-y-2"
+        >
+          <p
+            v-for="(ref, i) in profile.references"
+            :key="i"
+            class="text-sm text-gray-800 leading-snug pl-6 text-justify"
+            style="text-indent: -1.5rem"
+            v-html="ref"
+          ></p>
         </div>
       </section>
     </template>
@@ -72,7 +77,9 @@
       class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
     >
       <div class="bg-white rounded-lg shadow-lg p-6 w-80 sm:w-96 relative">
-        <h3 class="text-lg text-gray-800 font-semibold mb-4">Choose Language</h3>
+        <h3 class="text-lg text-gray-800 font-semibold mb-4">
+          Choose Language
+        </h3>
 
         <div class="flex flex-col gap-3">
           <component
@@ -80,9 +87,11 @@
             :to="profile.keyUrl || undefined"
             :disabled="!profile.keyUrl"
             class="w-full text-center px-1 py-2 rounded-full text-white font-semibold transition-colors duration-200"
-            :class="profile.keyUrl
-                    ? 'bg-yellow-500 hover:bg-green-700'
-                    : 'bg-gray-400 cursor-not-allowed'"
+            :class="
+              profile.keyUrl
+                ? 'bg-yellow-500 hover:bg-green-700'
+                : 'bg-gray-400 cursor-not-allowed'
+            "
             @click="isModalOpen = false"
           >
             🇮🇹 Italian version
@@ -93,9 +102,11 @@
             :to="profile.keyUrlEN || undefined"
             :disabled="!profile.keyUrlEN"
             class="w-full text-center px-1 py-2 rounded-full text-white font-semibold transition-colors duration-200"
-            :class="profile.keyUrlEN
-                    ? 'bg-green-600 hover:bg-green-700'
-                    : 'bg-gray-400 cursor-not-allowed'"
+            :class="
+              profile.keyUrlEN
+                ? 'bg-green-600 hover:bg-green-700'
+                : 'bg-gray-400 cursor-not-allowed'
+            "
             @click="isModalOpen = false"
           >
             🇬🇧 English version
@@ -115,8 +126,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import ProfileStats from './ProfileStats.vue';
+import { ref } from 'vue'
+import ProfileStats from './ProfileStats.vue'
 
 const SECTIONS = {
   introduction: 'General',

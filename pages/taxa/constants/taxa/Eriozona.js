@@ -1,39 +1,39 @@
-  const Eriozona = {
-    taxonName: 'Eriozona',
-    author: 'Schiner, 1860',
-    url: '/otus/985493/overview',
-    keyUrl: '',
-    keyUrlEN: '',
-    numSpecies: '19',
-    numSpeciesIta: '1',
-    distribution: ['Afrotropical', 'Indomalayan', 'Palearctic'],
-    introduction: `<p>Egger (1860) introduced the genus <i>Eriozona</i> to include the species <i>Syrphus oestriformis</i> Meigen, 1822, later regarded as junior synonym of Scaeva<i> syrphoides</i> Fallén, 1816. Subsequent authors accepted <i>Eriozona</i> as a valid genus (e.g. Verrall, 1901; Bezzi and Stein, 1907; Sack, 1930). The genus was considered the sister clade of <i>Megasyrphus</i> Duśek & Láska, 1967 by Duśek & Láska (1967) and Vockeroth (1969).  More recent analyses based on larval morphology (Rotheray & Gilbert, 1989) and molecular data (Mengual et al., 2008, 2023) have confirmed this relationship, identifying a well defined clade composed of (Eriozona + (Megasyrphus + Didea)) within the tribe Syrphini.</p>`,
-    diagnosis: `The genus <i>Eriozona</i> includes large, hairy, bumblebee mimicking Syrphinae. The presence of long hairs with contrasting colours makes the species of this genus easy to distinguish. The wing bears a distinct dark spot, a feature shared within the European fauna only with species of the subgenus <i>Leucozona</i> (<i>Leucozona</i>). However, in the latter the second tergite shows whitish markings, which are absent in <i>Eriozona</i> (its colour pattern is produced solely by differently coloured hairs). Although phylogenetically close to the genus <i>Megasyrphus</i>, the two genera are difficult to confuse: <i>Megasyrphus</i> species have a characteristic yellow and black abdominal pattern, whereas the abdomen of <i>Eriozona</i> is entirely black.`,
-    description: `
+const Eriozona = {
+  otuId: 985493,
+  taxonName: 'Eriozona',
+  author: 'Schiner, 1860',
+  url: '/otus/985493/overview',
+  keyUrl: '',
+  keyUrlEN: '',
+  numSpecies: '19',
+  numSpeciesIta: '1',
+  distribution: ['Afrotropical', 'Indomalayan', 'Palearctic'],
+  introduction: `<p>Egger (1860) introduced the genus <i>Eriozona</i> to include the species <i>Syrphus oestriformis</i> Meigen, 1822, later regarded as junior synonym of Scaeva<i> syrphoides</i> Fallén, 1816. Subsequent authors accepted <i>Eriozona</i> as a valid genus (e.g. Verrall, 1901; Bezzi and Stein, 1907; Sack, 1930). The genus was considered the sister clade of <i>Megasyrphus</i> Duśek & Láska, 1967 by Duśek & Láska (1967) and Vockeroth (1969).  More recent analyses based on larval morphology (Rotheray & Gilbert, 1989) and molecular data (Mengual et al., 2008, 2023) have confirmed this relationship, identifying a well defined clade composed of (Eriozona + (Megasyrphus + Didea)) within the tribe Syrphini.</p>`,
+  diagnosis: `The genus <i>Eriozona</i> includes large, hairy, bumblebee mimicking Syrphinae. The presence of long hairs with contrasting colours makes the species of this genus easy to distinguish. The wing bears a distinct dark spot, a feature shared within the European fauna only with species of the subgenus <i>Leucozona</i> (<i>Leucozona</i>). However, in the latter the second tergite shows whitish markings, which are absent in <i>Eriozona</i> (its colour pattern is produced solely by differently coloured hairs). Although phylogenetically close to the genus <i>Megasyrphus</i>, the two genera are difficult to confuse: <i>Megasyrphus</i> species have a characteristic yellow and black abdominal pattern, whereas the abdomen of <i>Eriozona</i> is entirely black.`,
+  description: `
 <p>The face is yellow and covered with yellow hairs; the oral margin is black. The eyes bear whitish hairs. Males are holoptic, females dichoptic. The frons is brownish, largely dusted, and covered with yellow hairs anteriorly and black hairs posteriorly. The antennae are simple and entirely black, eventually showing a faint reddish-brown tint ventrally on the postpedicel. The latter is elongated, longer than scapus + pedicel. The arista is brown and not longer than twice the length of the postpedicel.</p>
 <p>The scutum is black and tomentose. Scutal hairs are long, whitish both anteriorly and posteriorly. A broad band of black hairs in present centrally on the scutum. The scutellum is whitish and bears long whitish hairs. The pleura are entirely black and largely covered with tomentosity. Pleural hairs are long, apically wavy and brown. The metasternum is bare.</p>
 <p>The legs are simple and predominantly black; the fore and mid tibiae are yellowish, becoming darker apically. Only the base and apex of the hind tibiae are yellowish brown. The tarsomeres are yellowish brown. Leg hairs are long on the femora and shorter on tibiae and taromeres. The hairs are generally black on the femora and predominantly yellow on tibiae and tarsomeres, except on the hind tibiae, where they are mainly black. The wings are hyaline, with a large black-brown spot in the central part of the wing. The veins are yellowish basally and black apically. The wing is completely covered with microtrichia. The halteres are brownish. No long hairs are present on the dorsal surface of the calyptres.</p>
 <p>The abdomen is broadly oval, marginate, and entirely black. Its colour pattern is produced by long hairs that are whitish on the first tergite and on the proximal half of the second tergite; black on the distal half of the second tergite and on the third tergite; and red on the following tergites. The sternites are entirely black and bear long, predominantly black hairs, with whitish hairs anteriorly and red hairs posteriorly.</p>
 <p>In males, the epandrium is trapezoidal, and the hypandrium is ventrally rounded. The surstyli are long (as long as the total length of the epandrium), nearly square, apically rounded. The hypandrium lacks a lingula is absent. The postgonites are very long and narrow, at least three times longer than wider. The cerci are oval and bear long hairs. The basiphallus is laterally compressed, and vaguely triangular, with an anteroventral spine like process. The distiphallus is apically compressed, slightly longer than the basiphallus.</p>
 `,
-    biology: 'The larvae of the genus are zoophagous. They are large, reaching up to 15 mm in length, and are covered with black, triangular shaped spicules. Little information is available on their biology; they appear to be aphidophagous on <i>Picea</i> plants. Adults are typically found in mature <i>Picea</i>/<i>Abies</i> woods. The larvae overwinter in the forest litter. <i>Eriozona syrphoides</i> is a univoltine and mainly non-migratory species.', 
-    biodiversity: `The genus Eriozona is a small group currently including only five species to date (Evenhuis & Pape, 2025). It is restricted to the Palaearctic region. All described species, with the exception of <I>E</I>. <i>syrphoides</i>, are exclusively known from Eastern Asia: China and Japan. <i>Eriozona syrphoides</i> is the only species of the genus occurring in Europe (Reverté et al., 2023).`,
-    italianBiodiversity: `As in the rest of Europe, only <i>E. syrphoides</i> is present in Italy. The species has been recorded exclusively from the mountainous areas of northern Italy (the Alps and the northern Apennines), and no records are currently available from central Italy, southern Italy, or the major islands.`,
-    references: [
-"Bezzi, M., Stein P. (1907). Cyclorrapha Aschiza. Cyclorrapha Schizophora: Schizometopa. In: Becker, T., Bezzi, M., Kertész, K., Stein, P. (eds.): Katalog der palaarktischen Dipteren, Vol. 3. Budapest. Pp. 1-188.",
-"Duśek, J., Láska, P. (1967). Versuch zum Aufbau eines naturlichen Systems mitteleuropäische r Arten der Unterfamilie Syrphinae (Diptera). Acta Sci. Nat. Brno 1: 349-390.",
-"Evenhuis, N.L., Pape, T. (2025). Systema Dipterorum, Version 6.2. <a href=\"http://diptera.org/\" target=\"_blank\">http://diptera.org/</a> [accessed on 25.08.2025]",
-"Mengual, X.; Mayer, C.; Burt, T.O.; Moran, K.M.; Dietz, L.; Nottebrock, G.; Pauli, T.; Young, A.D.; Brasseur, M.V.; Kukowka, S.; et al. (2023). Systematics and evolution of predatory flower flies (Diptera: Syrphidae) based on exon-capture sequencing. Systematic Entomology, 2023, 48: 250-277. <a href=\"https://doi.org/10.1111/syen.12573\" target=\"_blank\">https://doi.org/10.1111/syen.12573</a>",
-"Mengual, X., Ståhls, G. & Rojo, S. (2008) First phylogeny of predatory flower flies (Diptera, Syrphidae, Syrphinae) using mitochondrial COI and nuclear 28S rRNA genes: conflict and congruence with the current tribal classification. Cladistics, 24, 543–562. <a href=\"https://doi.org/10.1111/j.1096-0031.2008.00200.x\" target=\"_blank\">https://doi.org/10.1111/j.1096-0031.2008.00200.x</a>",
-"Reverté, S., Miličić, M., Ačanski, J., Andrić, A., Aracil, A., Aubert, M., Balzan, M.V., Bartomeus, I., Bogusch, P., et al. (2023). National records of 3000 European bee and hoverfly species: A contribution to pollinator conservation. Insect Conservation and Diversity, 16: 758-775.",
-"Rotheray, G.E. & Gilbert, F.S. (1989) The phylogeny and systematics of European predacious Syrphidae (Diptera) based on larval and puparial stages. Zoological Journal of the Linnean Society, 95, 29–70. <a href=\"https://doi.org/10.1111/j.1096-3642.1989.tb02222.x\" target=\"_blank\">https://doi.org/10.1111/j.1096-3642.1989.tb02222.x</a>",
-"Sack, P. (1930). 31. Syrphidae [part]. In: Lindner, E. (ed.): Die Fliegen der Palaearktischen Region 4(6): 177-240.",
-"Schiner, I.R. (1860). Vorlaufiger Commentar zum dipterologischen Theile der 'Fauna Austriaca', mit einer naheren Begrundung der in derselben aufgenommenen neuen Dipteren-Gattungen. II. Wiener Entomologische Monatschrift, 4: 208-216.",
-"Verrall, G.H. (1901). British flies. Vol. VIII, Platypezidae, Pipunculidae and Syrphidae of Great Britain. Gurney & Jackson, London, 691 pp.",
-"Vockeroth, J.R., (1969). A revision of the genera of the Syrphini (Diptera: Syrphidae). The Memoirs of the Entomological Society of Canada 62: 1-176."
+  biology:
+    'The larvae of the genus are zoophagous. They are large, reaching up to 15 mm in length, and are covered with black, triangular shaped spicules. Little information is available on their biology; they appear to be aphidophagous on <i>Picea</i> plants. Adults are typically found in mature <i>Picea</i>/<i>Abies</i> woods. The larvae overwinter in the forest litter. <i>Eriozona syrphoides</i> is a univoltine and mainly non-migratory species.',
+  biodiversity: `The genus Eriozona is a small group currently including only five species to date (Evenhuis & Pape, 2025). It is restricted to the Palaearctic region. All described species, with the exception of <I>E</I>. <i>syrphoides</i>, are exclusively known from Eastern Asia: China and Japan. <i>Eriozona syrphoides</i> is the only species of the genus occurring in Europe (Reverté et al., 2023).`,
+  italianBiodiversity: `As in the rest of Europe, only <i>E. syrphoides</i> is present in Italy. The species has been recorded exclusively from the mountainous areas of northern Italy (the Alps and the northern Apennines), and no records are currently available from central Italy, southern Italy, or the major islands.`,
+  references: [
+    'Bezzi, M., Stein P. (1907). Cyclorrapha Aschiza. Cyclorrapha Schizophora: Schizometopa. In: Becker, T., Bezzi, M., Kertész, K., Stein, P. (eds.): Katalog der palaarktischen Dipteren, Vol. 3. Budapest. Pp. 1-188.',
+    'Duśek, J., Láska, P. (1967). Versuch zum Aufbau eines naturlichen Systems mitteleuropäische r Arten der Unterfamilie Syrphinae (Diptera). Acta Sci. Nat. Brno 1: 349-390.',
+    'Evenhuis, N.L., Pape, T. (2025). Systema Dipterorum, Version 6.2. <a href="http://diptera.org/" target="_blank">http://diptera.org/</a> [accessed on 25.08.2025]',
+    'Mengual, X.; Mayer, C.; Burt, T.O.; Moran, K.M.; Dietz, L.; Nottebrock, G.; Pauli, T.; Young, A.D.; Brasseur, M.V.; Kukowka, S.; et al. (2023). Systematics and evolution of predatory flower flies (Diptera: Syrphidae) based on exon-capture sequencing. Systematic Entomology, 2023, 48: 250-277. <a href="https://doi.org/10.1111/syen.12573" target="_blank">https://doi.org/10.1111/syen.12573</a>',
+    'Mengual, X., Ståhls, G. & Rojo, S. (2008) First phylogeny of predatory flower flies (Diptera, Syrphidae, Syrphinae) using mitochondrial COI and nuclear 28S rRNA genes: conflict and congruence with the current tribal classification. Cladistics, 24, 543–562. <a href="https://doi.org/10.1111/j.1096-0031.2008.00200.x" target="_blank">https://doi.org/10.1111/j.1096-0031.2008.00200.x</a>',
+    'Reverté, S., Miličić, M., Ačanski, J., Andrić, A., Aracil, A., Aubert, M., Balzan, M.V., Bartomeus, I., Bogusch, P., et al. (2023). National records of 3000 European bee and hoverfly species: A contribution to pollinator conservation. Insect Conservation and Diversity, 16: 758-775.',
+    'Rotheray, G.E. & Gilbert, F.S. (1989) The phylogeny and systematics of European predacious Syrphidae (Diptera) based on larval and puparial stages. Zoological Journal of the Linnean Society, 95, 29–70. <a href="https://doi.org/10.1111/j.1096-3642.1989.tb02222.x" target="_blank">https://doi.org/10.1111/j.1096-3642.1989.tb02222.x</a>',
+    'Sack, P. (1930). 31. Syrphidae [part]. In: Lindner, E. (ed.): Die Fliegen der Palaearktischen Region 4(6): 177-240.',
+    "Schiner, I.R. (1860). Vorlaufiger Commentar zum dipterologischen Theile der 'Fauna Austriaca', mit einer naheren Begrundung der in derselben aufgenommenen neuen Dipteren-Gattungen. II. Wiener Entomologische Monatschrift, 4: 208-216.",
+    'Verrall, G.H. (1901). British flies. Vol. VIII, Platypezidae, Pipunculidae and Syrphidae of Great Britain. Gurney & Jackson, London, 691 pp.',
+    'Vockeroth, J.R., (1969). A revision of the genera of the Syrphini (Diptera: Syrphidae). The Memoirs of the Entomological Society of Canada 62: 1-176.'
+  ]
+}
 
-    ]
-};
-
-
-export default Eriozona;
+export default Eriozona
