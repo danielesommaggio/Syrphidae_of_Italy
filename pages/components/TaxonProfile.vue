@@ -74,7 +74,7 @@
     <!-- Modal -->
     <div
       v-if="isModalOpen"
-      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[2000]"
     >
       <div class="bg-white rounded-lg shadow-lg p-6 w-80 sm:w-96 relative">
         <h3 class="text-lg text-gray-800 font-semibold mb-4">
