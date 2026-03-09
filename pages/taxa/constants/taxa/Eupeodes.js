@@ -4,7 +4,7 @@ const Eupeodes = {
   author: 'Osten-Sacken, 1877',
   url: '/otus/1024692/overview',
   keyUrl: '/keys/3820',
-  keyUrlEN: '',
+  keyUrlEN: '/keys/3938',
   numSpecies: '85',
   numSpeciesIta: '12',
   distribution: ['Afrotropical', 'Australasian', 'Indomalayan', 'Nearctic', 'Neotropical', 'Palearctic'],
