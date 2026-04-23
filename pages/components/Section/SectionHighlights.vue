@@ -8,20 +8,7 @@
           <VCardContent class="relative">
             <div class="flex items-center space-x-2 mb-1">
               <!-- Animated Attention Icon -->
-              <h3 class="mt-2 mb-0 text-lg font-semibold">Taxa Completed</h3>
-              <svg
-                class="w-5 h-5 text-yellow-500 animate-pulse"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M8.257 3.099c.764-1.36 2.682-1.36 3.446 0l6.518 11.607c.75 1.336-.213 2.994-1.732 
-                  2.994H3.471c-1.52 0-2.482-1.658-1.732-2.994L8.257 3.1zM11 13a1 1 0 10-2 0 1 1 0 002 0zm-1-2a1 1 0 01-1-1V8a1 1 0 112 0v2a1 1 0 01-1 1z"
-                  clip-rule="evenodd"
-                />
-              </svg>
+              <h3 class="mt-2 mb-0 text-lg font-semibold">News & Updates</h3>
             </div>
 
             <time class="text-base-soft block mb-3 italic text-sm" datetime="2023-10-09">
@@ -29,29 +16,29 @@
             </time>
 
             <p>
-              Not all the subfamilies are completed, meaning some names are missing.
-              Therefore, before citing the contents, make sure to take a look at the
-              document here.
+Stay up to date with the latest developments, new records, and ongoing work on the Syrphidae of Italy project.
+Visit the
+<router-link to="/news" class="no-underline hover:underline hover:text-red-400 transition">
+News section
+</router-link>
+to explore recent additions, announcements, and project highlights.
             </p>
           </VCardContent>
         </VCard>
 
         <VCard>
           <VCardContent>
-            <h3 class="mt-2 mb-1 font-semibold text-lg">Syrphidae of Italy Powered by TaxonWorks</h3>
+            <h3 class="mt-2 mb-1 font-semibold text-lg">Syrphidae of Italy in TaxonWorks</h3>
             <time datetime="2023-04-17" class="block text-sm text-base-soft mb-3 italic">
               Updated: April 17, 2023
             </time>
             <p>
-              Syrphidae of Italy lives in TaxonWorks.
-              The interfaces of TaxonWorks include a wide range of additional
-              filtering and reporting functionalities. Please
-              <router-link to="/about" class="no-underline hover:underline hover:text-red-400 transition">
-                contact us
-              </router-link>
-              if you need extended access to the data. Over time we expect
-              this site to gradually mirror these extended functionalities of
-              TaxonWorks.
+The Syrphidae of Italy project is built on the TaxonWorks platform, which provides powerful tools for data exploration, filtering, reporting, and collaborative research.
+If you require deeper access to the dataset or advanced functionality, please
+<router-link to="/about" class="no-underline hover:underline hover:text-red-400 transition">
+contact us
+</router-link>.
+As the project grows, this site will continue to expand and incorporate more of the advanced features available within TaxonWorks.
             </p>
           </VCardContent>
         </VCard>
