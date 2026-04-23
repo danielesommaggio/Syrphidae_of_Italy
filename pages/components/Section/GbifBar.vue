@@ -31,7 +31,7 @@
         class="shrink-0"
       >
         <img 
-          src="https://img.shields.io/badge/DOI-10.15468%2Fkyulwg-blue.svg" 
+          src="https://img.shields.io/badge/DOI-10.15468%2Fkyulwg-orange.svg" 
           alt="Dataset DOI"
           class="h-6"
         />
