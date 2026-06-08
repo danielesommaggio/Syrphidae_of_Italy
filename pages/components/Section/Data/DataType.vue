@@ -1,17 +1,21 @@
 <template>
-  <div class="flex items-center bg-base-foreground flex-col relative">
-    <component
-      class="h-14 w-14 z-10 text-primary-color dark:text-base-content"
-      :is="icon"
-    />
-    <div class="leading-3 text-center mt-5">
-      <span class="font-medium text-2xl block line">
-        <ClientOnly>
-          <AnimateNumber :number="count" />
-        </ClientOnly>
-      </span>
-      <span class="uppercase text-sm">{{ label }}</span>
+  <div class="flex items-center flex-col gap-2 py-3 px-4 group">
+    
+    <div class="p-2 rounded-full bg-white/10 group-hover:bg-primary/20 transition-colors duration-300">
+      <component
+        class="h-7 w-7 text-primary-color group-hover:text-primary transition-colors duration-300"
+        :is="icon"
+      />
     </div>
+
+    <span class="font-medium text-2xl leading-none tabular-nums text-white">
+      <ClientOnly>
+        <AnimateNumber :number="count" />
+      </ClientOnly>
+    </span>
+    <span class="text-xs uppercase tracking-wider text-white/50 text-center">
+      {{ label }}
+    </span>
   </div>
 </template>
 
@@ -19,19 +23,8 @@
 import AnimateNumber from '../../AnimateNumber.vue'
 
 defineProps({
-  icon: {
-    type: Object,
-    required: true
-  },
-
-  count: {
-    type: Number,
-    default: 0
-  },
-
-  label: {
-    type: String,
-    required: true
-  }
+  icon: { type: Object, required: true },
+  count: { type: Number, default: 0 },
+  label: { type: String, required: true }
 })
 </script>

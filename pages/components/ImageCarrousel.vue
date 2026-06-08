@@ -6,20 +6,25 @@
       :src="currentImage.src"
       alt="Dichroplus maculipennis"
     />
-    <div class="bg-black bg-opacity-25 absolute h-full w-full top-0">
+    <div class="absolute h-full w-full top-0" style="background: radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 100%);">
       <slot />
     </div>
-    <div class="absolute bottom-2 right-4">
-      <span class="z-10 text-white text-sm drop-shadow">
-        <RouterLink
-          v-if="currentImage.otuId"
-          class="text-white"
-          :to="{ name: 'otus-id', params: { id: currentImage.otuId } }"
-        >
-          <i>{{ currentImage.label }}</i> © {{ currentImage.copyright }}
-        </RouterLink>
-      </span>
+
+    <!-- Image credit — top right -->
+    <div class="absolute top-4 right-4 z-10">
+      <RouterLink
+        v-if="currentImage.otuId"
+        :to="{ name: 'otus-id', params: { id: currentImage.otuId } }"
+        class="flex items-center gap-2 bg-black/30 backdrop-blur-sm hover:bg-black/50 transition-colors duration-200 rounded-lg px-3 py-1.5 no-underline"
+      >
+        <div class="flex flex-col items-end">
+          <i class="text-white text-sm font-medium">{{ currentImage.label }}</i>
+          <span class="text-white/50 text-xs">© {{ currentImage.copyright }}</span>
+        </div>
+        <i class="ti ti-camera text-white/50 text-base" aria-hidden="true"></i>
+      </RouterLink>
     </div>
+
   </div>
 </template>
 

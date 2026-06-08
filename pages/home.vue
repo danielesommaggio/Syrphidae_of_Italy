@@ -1,8 +1,6 @@
 <template>
     <div class="h-full">
       <SectionLandscape />
-      <SectionData />
-      <hr class="border-base-muted" />
       <SectionDescription class="border-b "/>
       <SectionHighlights class="drop-shadow" />
       <SectionTerms class="drop-shadow" />
