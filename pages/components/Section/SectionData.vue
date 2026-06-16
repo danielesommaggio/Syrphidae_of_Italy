@@ -24,13 +24,16 @@ import IconMicroscope from '../Icon/IconMicroscope.vue'
 import IconOk from '../Icon/IconOk.vue'
 import IconReference from '../Icon/IconReference.vue'
 import IconCitation from '../Icon/iconCitation.vue'
+import IconX from '../Icon/IconX.vue'
 
 import DataType from './Data/DataType.vue'
 
+const SYRPHIDAE_ID = 1095229
+
 const TYPES = {
   validSpecies: 'Valid species',
-  validExtantSpecies: 'Valid extant species',
-  taxonNames: 'Taxon names',
+  genera: 'Genera',
+  invalidSpecies: 'Invalid species',
   projectSources: 'Project sources',
   collectionObjects: 'Collection objects',
   citations: 'Citations',
@@ -41,17 +44,17 @@ const dataTypes = shallowRef({
   [TYPES.validSpecies]: {
     icon: IconOk,
     label: 'Valid species',
-    count: 29410
+    count: 30000
   },
-  [TYPES.validExtantSpecies]: {
+  [TYPES.genera]: {
     icon: IconOk,
-    label: 'Valid extant species',
-    count: 28955
+    label: 'Genus group names',
+    count: 1000
   },
-  [TYPES.taxonNames]: {
-    icon: IconMicroscope,
-    label: 'Scientific names',
-    count: 47350
+  [TYPES.invalidSpecies]: {
+    icon: IconX,
+    label: 'Invalid species',
+    count: 25000
   },
   [TYPES.projectSources]: {
     icon: IconReference,
@@ -67,7 +70,7 @@ const dataTypes = shallowRef({
     icon: IconImage,
     label: 'Images',
     count: 100
-  },  
+  },
   [TYPES.collectionObjects]: {
     icon: IconBug,
     label: 'Specimen records',
@@ -88,35 +91,45 @@ makeAPIRequest('/stats').then((response) => {
 })
 
 async function loadSpeciesCount() {
-  await makeAPIRequest('/taxon_names.json', {
-    params: {
-      page: 1,
-      per: 1,
-      validity: true,
-      rank: ['NomenclaturalRank::Iczn::SpeciesGroup::Species']
-    }
-  }).then(({ headers }) => {
-    dataTypes.value[TYPES.validSpecies].count = Number(
-      headers['pagination-total']
-    )
-  })
+  const [speciesRes, generaRes, invalidRes] = await Promise.all([
+    makeAPIRequest('/taxon_names.json', {
+      params: {
+        page: 1,
+        per: 1,
+        validity: true,
+        descendants: true,
+        'taxon_name_id[]': SYRPHIDAE_ID,
+        rank: ['NomenclaturalRank::Iczn::SpeciesGroup::Species']
+      }
+    }),
+    makeAPIRequest('/taxon_names.json', {
+      params: {
+        page: 1,
+        per: 1,
+        validity: true,
+        descendants: true,
+        'taxon_name_id[]': SYRPHIDAE_ID,
+        rank: [
+          'NomenclaturalRank::Iczn::GenusGroup::Genus',
+          'NomenclaturalRank::Iczn::GenusGroup::Subgenus'
+        ]
+      }
+    }),
+    makeAPIRequest('/taxon_names.json', {
+      params: {
+        page: 1,
+        per: 1,
+        validity: false,
+        descendants: true,
+        'taxon_name_id[]': SYRPHIDAE_ID,
+        rank: ['NomenclaturalRank::Iczn::SpeciesGroup::Species']
+      }
+    })
+  ])
 
-  await makeAPIRequest('/taxon_names.json', {
-    params: {
-      page: 1,
-      per: 1,
-      taxon_name_id: [],
-      taxon_name_classification: ['TaxonNameClassification::Iczn::Fossil'],
-      validity: true,
-      descendants: true,
-      nomenclature_group: ['Species'],
-      rank: ['NomenclaturalRank::Iczn::SpeciesGroup::Species']
-    }
-  }).then(({ headers }) => {
-    dataTypes.value[TYPES.validExtantSpecies].count =
-      dataTypes.value[TYPES.validSpecies].count -
-      Number(headers['pagination-total'])
-  })
+  dataTypes.value[TYPES.validSpecies].count = Number(speciesRes.headers['pagination-total'])
+  dataTypes.value[TYPES.genera].count = Number(generaRes.headers['pagination-total'])
+  dataTypes.value[TYPES.invalidSpecies].count = Number(invalidRes.headers['pagination-total'])
 
   triggerRef(dataTypes)
 }

@@ -26,12 +26,12 @@
 
       <!-- DOI Badge -->
       <a 
-        href="https://doi.org/10.15468/kyulwg" 
+        href="https://doi.org/10.15468/faryxm" 
         target="_blank"
         class="shrink-0"
       >
         <img 
-          src="https://img.shields.io/badge/DOI-10.15468%2Fkyulwg-orange.svg" 
+          src="https://img.shields.io/badge/DOI-10.15468%2faryxm-orange.svg" 
           alt="Dataset DOI"
           class="h-6"
         />

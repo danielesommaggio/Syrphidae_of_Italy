@@ -3,7 +3,7 @@
     <div class="max-w-6xl mx-auto">
 
       <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-100 mb-4">
-        Latest Publications Using UCFC Data
+        Latest Publications Using SoI Data
       </h3>
 
       <iframe 
