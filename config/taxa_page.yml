@@ -23,12 +23,19 @@ taxa_page:
       - - - id: panel:biology
             bind:
               topic_id:
+
   specimen_records:
-    rank_group: ['SpeciesGroup']
+    label: 'Specimen & Occurrence Records'
+    # No rank_group restriction — experimentally enabled for every rank (see
+    # PanelSpecimenOccurrences.vue's isHigherTaxon). Genus/subgenus is the
+    # only range actually verified to perform reasonably; tribe and up are
+    # untested/likely impractical (see project memory) but left open on
+    # purpose to see how it actually behaves rather than pre-judging it.
     panels:
-      - - - panel:specimen-records
+      - - - panel:specimen-occurrences
+  
   asserted_distributions:
-    label: 'Asserted Distributions (List)'
+    label: 'Asserted Distributions'
     rank_group: ['SpeciesGroup']
     panels:
       - - - id: panel:asserted-distributions
@@ -41,3 +48,12 @@ taxa_page:
     rank_group: ['GenusGroup', 'SpeciesGroup']
     panels:
       - - - panel:inaturalist
+
+  GBIF:
+    label: 'GBIF'
+    # panel:gbif-taxon removed pending a redesign; the concept-alignment rebuild
+    # shipped with known correctness bugs (see the 2026-08-31 GBIF spec).
+    panels:
+      - - - panel:gbif-images
+          - panel:gbif-map
+          - panel:gbif-type-specimens

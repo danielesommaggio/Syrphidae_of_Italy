@@ -130,10 +130,10 @@
                     <div class="flex items-center justify-center gap-6">
                       <!-- EN -->
                       <RouterLink
-                        :to="item.keyUrlEN || ''"
+                        :to="item.keyLinkEN || ''"
                         class="inline-flex items-center gap-1 text-xs text-gray-800 hover:text-amber-600 transition transform hover:scale-110"
-                        :class="{ 'opacity-25 pointer-events-none cursor-default': !item.keyUrlEN }"
-                        :title="item.keyUrlEN ? 'Open English key' : 'English key not available'"
+                        :class="{ 'opacity-25 pointer-events-none cursor-default': !item.keyLinkEN }"
+                        :title="item.keyLinkEN ? 'Open English key' : 'English key not available'"
                         @click.stop
                       >
                         <span class="font-medium tracking-wide">EN</span>
@@ -148,10 +148,10 @@
 
                       <!-- IT -->
                       <RouterLink
-                        :to="item.keyUrl || ''"
+                        :to="item.keyLinkIT || ''"
                         class="inline-flex items-center gap-1 text-xs text-gray-800 hover:text-amber-600 transition transform hover:scale-110"
-                        :class="{ 'opacity-25 pointer-events-none cursor-default': !item.keyUrl }"
-                        :title="item.keyUrl ? 'Open Italian key' : 'Italian key not available'"
+                        :class="{ 'opacity-25 pointer-events-none cursor-default': !item.keyLinkIT }"
+                        :title="item.keyLinkIT ? 'Open Italian key' : 'Italian key not available'"
                         @click.stop
                       >
                         <span class="font-medium tracking-wide">IT</span>
@@ -236,8 +236,12 @@ import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import TaxaTableIntro from './TaxaTableIntro.vue';
 import taxaListRaw from '/pages/taxa/constants/taxa.js';
+// ⚠️ Adjust this path to match the one the keys panel uses.
+import TaxonWorks from '@/modules/otus/services/TaxonWorks.js';
 
 const router = useRouter();
+
+const controller = new AbortController();
 
 const modalRegion = ref(null); // region clicked for modal
 const searchQuery = ref('');
@@ -290,8 +294,6 @@ const regionDotColor = {
 function handleKeydown(e) {
   if (e.key === 'Escape') modalRegion.value = null;
 }
-onMounted(() => window.addEventListener('keydown', handleKeydown));
-onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
 
 // Coerce a value to a finite number, or null if it isn't one
 function toNum(v) {
@@ -367,17 +369,87 @@ function getSortedRegions(distribution) {
   return [...distribution].sort((a, b) => (regionMap[a]?.full || a).localeCompare(regionMap[b]?.full || b));
 }
 
-// Build taxa list
-const taxaList = taxaListRaw.map(taxon => ({
-  ...taxon,
-  numSpecies: parseNumSpecies(taxon),
-  numSpeciesIta: parseNumSpeciesIta(taxon)
-}));
+// Build taxa list — now a ref so key links can be filled in asynchronously.
+// keyLinkEN / keyLinkIT start null (link disabled) and are populated on mount.
+const taxaList = ref(
+  taxaListRaw.map(taxon => ({
+    ...taxon,
+    numSpecies: parseNumSpecies(taxon),
+    numSpeciesIta: parseNumSpeciesIta(taxon),
+    keyLinkEN: null,
+    keyLinkIT: null
+  }))
+);
+
+// --- Dynamic key resolution (mirrors the keys panel) -------------------------
+
+// Flatten a getKeys() response into a single list of
+// { id, label, kind, is_media, scope } where scope is 'scoped' | 'in'.
+// 'scoped' = the genus's OWN keys; 'in' = parent keys the genus appears within.
+function collectKeys(data) {
+  const tag = (arr, kind, scope, mapFn) =>
+    (arr || []).map(x => ({ ...mapFn(x), kind, scope }));
+
+  return [
+    ...tag(data.leads?.scoped, 'lead', 'scoped', l => ({ id: l.id, label: l.text })),
+    ...tag(data.leads?.in, 'lead', 'in', l => ({ id: l.id, label: l.text })),
+    ...tag(data.observation_matrices?.scoped, 'matrix', 'scoped', m => ({ id: m.id, label: m.name, is_media: m.is_media })),
+    ...tag(data.observation_matrices?.in, 'matrix', 'in', m => ({ id: m.id, label: m.name, is_media: m.is_media }))
+  ];
+}
+
+// Build the same named-route objects the keys panel uses
+function toRoute(key) {
+  if (key.kind === 'lead') return { name: 'dichotomous-key', params: { id: key.id } };
+  return { name: key.is_media ? 'image-matrices-id' : 'interactive-key', params: { id: key.id } };
+}
+
+// Pick the genus's own EN / IT keys by their (EN) / (IT) label tag.
+// Only 'scoped' keys are this genus's own — 'in' keys are parent keys it appears in,
+// so they're excluded here (they'd otherwise leak the family-level Italian key).
+function pickLanguageKeys(keys) {
+  const own = keys.filter(k => k.scope === 'scoped');
+  const en = own.find(k => /\(en\)/i.test(k.label || ''));
+  const it = own.find(k => /\(it\)/i.test(k.label || ''));
+  return {
+    keyLinkEN: en ? toRoute(en) : null,
+    keyLinkIT: it ? toRoute(it) : null
+  };
+}
+
+// Fetch keys for every genus by its otuId and enrich the reactive list in place
+async function resolveKeys() {
+  await Promise.all(
+    taxaList.value.map(async (taxon) => {
+      if (!taxon.otuId) return;
+      try {
+        const { data } = await TaxonWorks.getKeys(taxon.otuId, { signal: controller.signal });
+        const { keyLinkEN, keyLinkIT } = pickLanguageKeys(collectKeys(data));
+        taxon.keyLinkEN = keyLinkEN;
+        taxon.keyLinkIT = keyLinkIT;
+      } catch {
+        // Leave links null → they stay disabled rather than pointing at a stale key.
+      }
+    })
+  );
+}
+
+// --- Lifecycle ---------------------------------------------------------------
+
+onMounted(() => {
+  resolveKeys();
+  window.addEventListener('keydown', handleKeydown);
+});
+
+onUnmounted(() => {
+  controller.abort();
+  window.removeEventListener('keydown', handleKeydown);
+});
 
 // Realms actually present in the data, alphabetical, for the filter chips
 const availableRegions = computed(() => {
   const set = new Set();
-  taxaList.forEach(t => (t.distribution || []).forEach(r => set.add(r)));
+  taxaList.value.forEach(t => (t.distribution || []).forEach(r => set.add(r)));
   return [...set].sort((a, b) => (regionMap[a]?.full || a).localeCompare(regionMap[b]?.full || b));
 });
 
@@ -385,7 +457,7 @@ const availableRegions = computed(() => {
 const filteredTaxaList = computed(() => {
   const query = searchQuery.value.toLowerCase();
 
-  return taxaList.filter(taxon => {
+  return taxaList.value.filter(taxon => {
     // Realm chip filter
     if (activeRegion.value && !(taxon.distribution || []).includes(activeRegion.value)) {
       return false;
