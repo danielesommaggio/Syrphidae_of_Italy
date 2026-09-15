@@ -1,6 +1,6 @@
 <template>
   <header class="border-b border-base-muted pb-4 mb-6">
-    <h1 class="text-2xl font-semibold [&_i]:italic" :style="{ color: AMBER.name }" v-html="titleHtml" />
+    <h1 class="text-2xl font-semibold text-base-content">{{ meta.title }}</h1>
 
     <p v-if="meta.taxonomicScope" class="mt-1 text-base-content [&_i]:italic">
       <span class="text-base-soft">Scope: </span><RouterLink
@@ -8,12 +8,11 @@
         :to="{ name: 'otus-id', params: { id: meta.otuId } }"
         target="_blank"
         rel="noopener"
-        class="hover:underline"
-        :style="{ color: AMBER.name }"
-      ><span v-if="meta.taxonomicScopeHtml" v-html="meta.taxonomicScopeHtml" /><template v-else><span v-html="scopeHtml" /></template></RouterLink><span
+        class="text-secondary hover:underline"
+      ><span v-if="meta.taxonomicScopeHtml" v-html="meta.taxonomicScopeHtml" /><template v-else>{{ meta.taxonomicScope }}</template></RouterLink><span
         v-else-if="meta.taxonomicScopeHtml"
         v-html="meta.taxonomicScopeHtml"
-      /><template v-else><span v-html="scopeHtml" /></template>
+      /><template v-else>{{ meta.taxonomicScope }}</template>
     </p>
 
     <p v-if="primaryCitation" class="mt-2 text-sm text-base-content [&_i]:italic">
@@ -26,7 +25,7 @@
 
     <div class="mt-3 flex flex-wrap gap-2 text-xs text-base-soft">
       <span v-if="meta.coupletsCount" class="border border-base-muted rounded px-2 py-0.5">
-        {{ meta.coupletsCount }}
+        {{ meta.coupletsCount }} couplets
       </span>
       <span v-if="meta.otusCount" class="border border-base-muted rounded px-2 py-0.5">
         {{ meta.otusCount }} taxa
@@ -118,7 +117,6 @@ import { ref, computed } from 'vue'
 import { sanitizeAndLinkifyHtml } from '@/utils'
 import CompletenessReport from './CompletenessReport.vue'
 import GeographyPicker from './GeographyPicker.vue'
-import taxaListRaw from '/pages/taxa/constants/taxa.js'
 
 const props = defineProps({
   meta: { type: Object, required: true },
@@ -136,44 +134,9 @@ const props = defineProps({
 })
 defineEmits(['update:geoSelection', 'geoOpen'])
 
-// Amber palette — matches the Keys list page.
-const AMBER = { name: '#854F0B' }
-
 // null | 'taxonomy' | 'geography' — which completeness modal is open
 const showCompleteness = ref(null)
 const showReferences = ref(false)
-
-// --- Italicize genus names in plain-text titles/scope -------------------------
-// Only genera (from the taxa list) get italicized; families like "Syrphidae"
-// stay roman. Same rule as the Keys list page.
-const genusNames = (Array.isArray(taxaListRaw) ? taxaListRaw : [])
-  .map((t) => String(t.taxonName || '').replace(/<[^>]*>/g, '').trim())
-  .filter(Boolean)
-
-const genusRegex = (() => {
-  if (!genusNames.length) return null
-  const escaped = genusNames
-    .slice()
-    .sort((a, b) => b.length - a.length)
-    .map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-  return new RegExp(`\\b(${escaped.join('|')})\\b`, 'g')
-})()
-
-function italicizeGenera(text) {
-  const escaped = String(text || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-  if (!genusRegex) return escaped
-  return escaped.replace(genusRegex, '<i>$1</i>')
-}
-
-// Title with genus names italicized (meta.title is plain text like "Doros (EN)").
-const titleHtml = computed(() => italicizeGenera(props.meta.title))
-
-// Plain-text scope fallback with genera italicized. (When taxonomicScopeHtml is
-// present it's already marked up upstream, so this only feeds the text branch.)
-const scopeHtml = computed(() => italicizeGenera(props.meta.taxonomicScope))
 
 // attribution shape from TaxonWorks attribution_to_json is loosely specified; render a
 // best-effort string and never throw.
