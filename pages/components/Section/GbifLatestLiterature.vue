@@ -6,18 +6,17 @@
         Latest Publications Using SoI Data
       </h3>
 
-      <iframe 
-        src="https://www.gbif.org/api/widgets/literature/latest?gbifDatasetKey=83c91ce0-3fd9-42dd-a920-20feafe541f8"
-        scrolling="no"
-        frameborder="0"
-        allowtransparency="true"
-        allowfullscreen="false"
-        class="w-full h-[350px] rounded-lg border border-gray-200 dark:border-gray-700 bg-white"
-      ></iframe>
+      <VGbifCitationWidget
+        query="gbifDatasetKey=83c91ce0-3fd9-42dd-a920-20feafe541f8"
+        :per-page="20"
+        :height="350"
+        class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+      />
 
     </div>
   </section>
 </template>
 
 <script setup>
+import VGbifCitationWidget from '@jlpereira/taxonpages-plugin-gbif-citation-widget/components/VGbifCitationWidget.vue'
 </script>
