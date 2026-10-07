@@ -37,5 +37,5 @@
 </template>
 
 <script setup>
-import VGbifCitationWidgetButton from '@jlpereira/taxonpages-plugin-gbif-citation-widget/components/VGbifCitationWidgetButton.vue'
+import VGbifCitationWidgetButton from '../GbifCitation/components/VGbifCitationWidgetButton.vue'
 </script>

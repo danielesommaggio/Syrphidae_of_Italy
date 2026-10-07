@@ -18,5 +18,5 @@
 </template>
 
 <script setup>
-import VGbifCitationWidget from '@jlpereira/taxonpages-plugin-gbif-citation-widget/components/VGbifCitationWidget.vue'
+import VGbifCitationWidget from '../GbifCitation/components/VGbifCitationWidget.vue'
 </script>
