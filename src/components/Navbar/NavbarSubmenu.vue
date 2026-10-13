@@ -37,7 +37,7 @@
           role="menuitem"
           class="block px-4 py-2 text-base-content focus-visible:bg-base-foreground focus-visible:outline-none"
         >
-          {{ item.label }}
+          {{ menuLabel(item.label) }}
         </RouterLink>
       </div>
     </div>
@@ -45,6 +45,7 @@
 </template>
 
 <script setup>
+import { menuLabel } from '@/utils/soiLang.js'
 import { ref, nextTick, useTemplateRef, onMounted, onBeforeUnmount } from 'vue'
 
 defineProps({

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="bg-base-foreground border-b border-base-muted pl-4 pr-4">
+    <div class="soi-otu-head border-b soi-rule pl-4 pr-4">
       <div class="container mx-auto">
-        <div class="pt-6 pb-6">
+        <div class="pt-6 pb-7">
           <div
             class="flex flex-col-reverse md:flex-row justify-between items-start"
           >
@@ -15,7 +15,7 @@
               />
             </VSkeleton>
             <Autocomplete
-              class="print:hidden min-w-full mb-2 md:min-w-fit md:ml-2 md:mb-0 md:w-96"
+              class="soi-otu-search print:hidden min-w-full mb-2 md:min-w-fit md:ml-2 md:mb-0 md:w-80"
               url="/otus/autocomplete"
               query-param="term"
               label="label_html"
@@ -25,10 +25,10 @@
             />
           </div>
 
-          <div class="mt-8 flex justify-between items-end">
+          <div class="mt-7 flex flex-col sm:flex-row gap-4 justify-between sm:items-end">
             <VSkeleton
               :lines="2"
-              class="w-96"
+              class="w-full sm:w-auto max-w-3xl"
             >
               <TaxaInfo v-if="isReady" />
             </VSkeleton>
@@ -58,7 +58,7 @@
         </TabMenu>
       </div>
     </div>
-    <div class="pt-3 pb-4">
+    <div class="pt-5 pb-10 px-4">
       <div class="container mx-auto box-border">
         <RouterView
           v-if="isReady"
@@ -216,3 +216,14 @@ function loadOtu({ id, otu_valid_id }) {
   })
 }
 </script>
+
+<style scoped>
+.soi-otu-head {
+  background: var(--soi-paper);
+}
+.soi-otu-search :deep(input) {
+  border-radius: 999px !important;
+  border-color: var(--soi-rule) !important;
+  background: var(--soi-card);
+}
+</style>

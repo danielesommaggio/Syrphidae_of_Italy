@@ -1,81 +1,113 @@
 <template>
-  <div class="container mx-auto py-6">
-    <h1 class="text-2xl font-semibold text-base-content mb-4">Keys</h1>
-
-    <KeySearchBar
-      v-model="searchQuery"
-      placeholder="Search keys by taxon name…"
-      class="mb-4"
-    />
+  <SoiMasthead
+    :eyebrow="mt('eyebrow')"
+    :title="mt('title')"
+    :lede="mt('lede')"
+  />
+  <div class="soi-module container mx-auto box-border px-4 py-10">
+    <div class="flex flex-wrap items-center gap-4 mb-6">
+      <div class="w-full sm:w-96">
+        <KeySearchBar
+          v-model="searchQuery"
+  :placeholder="kt('filter')"
+        />
+      </div>
+      <span
+        v-if="!loading && keys.length"
+        class="text-sm soi-muted"
+        >{{ kt('count', { n: filteredKeys.length, total: keys.length }) }}</span
+      >
+    </div>
 
     <VSpinner v-if="loading" />
     <p
       v-else-if="!keys.length"
-      class="text-base-soft"
-    >No public keys in this project.</p>
+      class="soi-card p-6 soi-muted"
+    >{{ kt('none') }}</p>
     <p
       v-else-if="!filteredKeys.length"
-      class="text-base-soft"
-    >No keys match “{{ searchQuery }}”.</p>
+      class="soi-card p-6 soi-muted"
+    >{{ kt('noMatch', { q: searchQuery }) }}</p>
 
     <ul
       v-else
-      class="space-y-4"
+      class="grid md:grid-cols-2 gap-5"
     >
       <li
         v-for="k in filteredKeys"
         :key="k.id"
-        class="rounded-lg border border-base-muted bg-base-foreground p-4 sm:p-5"
+        class="soi-key-card flex flex-col"
       >
-        <RouterLink
-          :to="{ name: 'dichotomous-key', params: { id: k.id } }"
-          class="text-lg text-secondary hover:underline [&_i]:italic"
-          v-html="k.titleHtml"
-        />
-        <p
-          v-if="k.scope"
-          class="mt-1 text-sm text-base-content [&_i]:italic"
-        >
-          <span class="text-base-soft">Scope: </span><RouterLink
-            v-if="k.otuId"
-            :to="{ name: 'otus-id', params: { id: k.otuId } }"
-            target="_blank"
-            rel="noopener"
-            class="text-secondary hover:underline"
-          ><span
-            v-if="k.scopeHtml"
-            v-html="k.scopeHtml"
-          /><template v-else>{{ k.scope }}</template></RouterLink><span
-            v-else-if="k.scopeHtml"
-            v-html="k.scopeHtml"
-          /><template v-else>{{ k.scope }}</template>
-        </p>
-        <p
-          v-if="k.citation"
-          class="mt-1 text-sm text-base-content [&_i]:italic"
-        >
-          <span class="text-base-soft">Primary source: </span><span v-html="sanitizeAndLinkifyHtml(k.citation)" />
-        </p>
+        <div class="flex items-start justify-between gap-3">
+          <RouterLink
+            :to="{ name: 'dichotomous-key', params: { id: k.id } }"
+            class="soi-serif text-xl font-semibold leading-snug !text-[color:var(--soi-ink)] hover:underline underline-offset-4 [&_i]:italic"
+            v-html="k.titleHtml"
+          />
+          <span
+            v-if="lang(k)"
+            class="soi-lang"
+            :title="lang(k) === 'IT' ? 'In Italian' : 'In English'"
+            >{{ lang(k) }}</span
+          >
+        </div>
+
+        <dl class="mt-3 space-y-1.5 text-sm">
+          <div
+            v-if="k.scope"
+            class="flex gap-2"
+          >
+            <dt class="soi-muted w-16 shrink-0">{{ kt('scope') }}</dt>
+            <dd class="[&_i]:italic">
+              <RouterLink
+                v-if="k.otuId"
+                :to="{ name: 'otus-id', params: { id: k.otuId } }"
+                class="soi-link"
+              ><span
+                v-if="k.scopeHtml"
+                v-html="k.scopeHtml"
+              /><template v-else>{{ k.scope }}</template></RouterLink><span
+                v-else-if="k.scopeHtml"
+                v-html="k.scopeHtml"
+              /><template v-else>{{ k.scope }}</template>
+            </dd>
+          </div>
+          <div
+            v-if="k.citation"
+            class="flex gap-2"
+          >
+            <dt class="soi-muted w-16 shrink-0">{{ kt('source') }}</dt>
+            <dd
+              class="[&_i]:italic"
+              v-html="sanitizeAndLinkifyHtml(k.citation)"
+            />
+          </div>
+        </dl>
         <p
           v-if="k.description"
-          class="mt-1 text-sm text-base-content"
+          class="mt-3 text-sm leading-relaxed soi-muted"
         >
-          <span class="text-base-soft">Description: </span>{{ k.description }}
+          {{ k.description }}
         </p>
 
-        <div class="mt-2 flex flex-wrap gap-2 text-xs text-base-soft">
+        <div class="mt-auto pt-4 flex flex-wrap items-center gap-2 text-xs soi-muted">
           <span
             v-if="k.coupletsCount"
-            class="border border-base-muted rounded px-2 py-0.5"
-          >{{ k.coupletsCount }} couplets</span>
+            class="soi-chip"
+          >{{ k.coupletsCount }} {{ kt('couplets') }}</span>
           <span
             v-if="k.taxaCount"
-            class="border border-base-muted rounded px-2 py-0.5"
+            class="soi-chip"
           >{{ k.taxaCount }} taxa</span>
           <span
             v-if="k.updatedInWords"
-            class="border border-base-muted rounded px-2 py-0.5"
+            class="soi-chip"
           >updated {{ k.updatedInWords }} ago</span>
+          <RouterLink
+            :to="{ name: 'dichotomous-key', params: { id: k.id } }"
+            class="ml-auto soi-btn soi-btn-ink !py-1.5 !px-4 !text-sm"
+            >{{ kt('start') }} →</RouterLink
+          >
         </div>
       </li>
     </ul>
@@ -83,6 +115,18 @@
 </template>
 
 <script setup>
+import { useT as useMastheadT } from '@/utils/soiLang.js'
+
+const kt = useMastheadT({
+  en: { filter: 'Filter keys by taxon name…', count: '{n} of {total} keys', none: 'No public keys in this project yet.', noMatch: 'No keys match “{q}”.', scope: 'Scope', source: 'Source', couplets: 'couplets', start: 'Start key' },
+  it: { filter: 'Filtra le chiavi per nome del taxon…', count: '{n} di {total} chiavi', none: 'Nessuna chiave pubblica in questo progetto.', noMatch: 'Nessuna chiave corrisponde a “{q}”.', scope: 'Ambito', source: 'Fonte', couplets: 'distici', start: 'Inizia la chiave' }
+})
+
+const mt = useMastheadT({
+  en: { eyebrow: 'Identification', title: 'Identification keys', lede: 'Dichotomous keys to the genera and species of Italian hoverflies, in English and Italian. Pick a key and answer one couplet at a time.' },
+  it: { eyebrow: 'Identificazione', title: 'Chiavi di identificazione', lede: 'Chiavi dicotomiche per i generi e le specie dei sirfidi italiani, in inglese e in italiano. Scegli una chiave e rispondi a un distico alla volta.' }
+})
+
 import { ref, computed, onMounted } from 'vue'
 import { makeAPIRequest } from '@/utils/request'
 import { sanitizeAndLinkifyHtml } from '@/utils'
@@ -92,6 +136,12 @@ import KeySearchBar from './KeySearchBar.vue'
 const loading = ref(true)
 const keys = ref([])
 const searchQuery = ref('')
+
+// Language tag from the "(EN)" / "(IT)" suffix used in SoI key titles
+function lang(k) {
+  const m = plain(k.titleHtml || k.title).match(/\((EN|IT)\)/i)
+  return m ? m[1].toUpperCase() : ''
+}
 
 // Strip HTML tags so a search for "Ilma" matches the stored "<i>Ilma</i>".
 function plain(s) {
@@ -221,3 +271,27 @@ onMounted(async () => {
   }
 })
 </script>
+<style scoped>
+.soi-key-card {
+  background: var(--soi-card);
+  border: 1px solid var(--soi-rule);
+  border-left: 4px solid var(--soi-yellow);
+  border-radius: 6px;
+  padding: 1.4rem 1.5rem;
+}
+.soi-lang {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  background: var(--soi-ink);
+  color: var(--soi-paper);
+}
+.soi-chip {
+  border: 1px solid var(--soi-rule);
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+}
+</style>

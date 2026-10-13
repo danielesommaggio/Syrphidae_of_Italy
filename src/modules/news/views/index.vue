@@ -1,6 +1,10 @@
 <template>
-  <div class="container mx-auto px-4 md:px-0 box-border py-8">
-    <h1 class="font-medium text-4xl mb-4">News</h1>
+  <SoiMasthead
+    :eyebrow="mt('eyebrow')"
+    :title="mt('title')"
+    :lede="mt('lede')"
+  />
+  <div class="soi-module container mx-auto box-border px-4 py-10">
 
     <PinnedNews
       v-if="store.pinnedNews.length"
@@ -31,6 +35,13 @@
 </template>
 
 <script setup>
+import { useT as useMastheadT } from '@/utils/soiLang.js'
+
+const mt = useMastheadT({
+  en: { eyebrow: 'From the project', title: 'News', lede: 'Updates on the catalogue, new data releases, meetings and calls for collaboration.' },
+  it: { eyebrow: 'Dal progetto', title: 'Notizie', lede: 'Aggiornamenti sul catalogo, nuovi rilasci di dati, convegni e richieste di collaborazione.' }
+})
+
 import { computed } from 'vue'
 import PinnedNews from '../components/PinnedNews.vue'
 import NewsCard from '../components/NewsCard.vue'

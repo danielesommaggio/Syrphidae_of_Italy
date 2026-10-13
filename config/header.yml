@@ -5,27 +5,34 @@
     - label: Home
       link: /
 
-    - label: About
-      link: /about
-    
-    - label: Addition
-      submenu:
-        - label: Taxa Addition
-          link: /newtaxa
-        - label: Reference Addition
-          link: /newreferences
+    - label: Genera
+      link: /taxa
+
+    - label: Atlas
+      link: /atlas
+
+    - label: Keys
+      link: /keys
 
     - label: Bibliography
       link: /resources/tw/filter/bibliography
 
-    - label: Search DwC
+    - label: Data
       link: /resources/tw/filter/dwc_otus
 
-    - label: Keys
-      link: /keys
-      
-    - label: Taxa
-      link: /taxa
+    - label: Latest
+      submenu:
+        - label: Names added
+          link: /newtaxa
+        - label: References added
+          link: /newreferences
 
     - label: News
       link: /news
+
+    - label: About
+      submenu:
+        - label: About SoI
+          link: /about
+        - label: Help wanted
+          link: /help-wanted

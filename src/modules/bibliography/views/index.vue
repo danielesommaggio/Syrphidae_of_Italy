@@ -1,6 +1,10 @@
 <template>
-  <div class="container mx-auto box-border">
-    <h1 class="text-4xl px-4 md:px-0 mt-4 mb-6 font-bold">Bibliography</h1>
+  <SoiMasthead
+    :eyebrow="mt('eyebrow')"
+    :title="mt('title')"
+    :lede="mt('lede')"
+  />
+  <div class="soi-module container mx-auto box-border px-4 py-8">
     <ClientOnly>
       <VSpinner
         v-if="isLoading"
@@ -138,6 +142,13 @@
 </template>
 
 <script setup>
+import { useT as useMastheadT } from '@/utils/soiLang.js'
+
+const mt = useMastheadT({
+  en: { eyebrow: 'Literature', title: 'Bibliography', lede: 'Every paper and book cited in SoI — search by words in the citation, by author, or narrow by year of publication.' },
+  it: { eyebrow: 'Letteratura', title: 'Bibliografia', lede: 'Tutti gli articoli e i libri citati in SoI — cerca per parole della citazione, per autore o per anno di pubblicazione.' }
+})
+
 import { ref, onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { makeAPIRequest } from '@/utils'
@@ -190,8 +201,8 @@ async function loadList(page = 1) {
 
 function setParameters(data = {}) {
   parameters.value = {
-    year_start: Number(data.year_start || 1650),
-    year_end: Number(data.year_end || 2025),
+    year_start: Number(data.year_start || MIN_YEAR),
+    year_end: Number(data.year_end || MAX_YEAR),
     author: data.author,
     query_term: data.query_term
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto h-full">
+  <div class="container mx-auto h-full px-4 py-10 max-w-4xl">
     <VCard class="overflow-hidden h-full">
       <VSpinner
         v-if="isLoading"
@@ -10,23 +10,24 @@
           <div class="p-8 md:p-10 w-full flex flex-col justify-between">
             <div>
               <div class="mb-6">
-                <h2 class="text-4xl font-bold leading-tight">
+                <p class="soi-eyebrow mb-3">News</p>
+                <h1 class="soi-serif text-4xl sm:text-5xl font-semibold leading-tight">
                   {{ news.title }}
-                </h2>
-                <span class="text-sm">
+                </h1>
+                <span class="block mt-3 text-sm soi-muted">
                   <template v-if="show_author">{{ news.creator }}</template>
                   <template v-if="show_author && show_date"> — </template>
                   <template v-if="show_date">{{ news.createdAt }}</template>
                 </span>
               </div>
               <div
-                class="prose max-w-max dark:prose-invert leading-relaxed mb-6"
+                class="prose prose-lg max-w-none dark:prose-invert leading-relaxed mb-6"
                 v-html="news.content"
               />
             </div>
             <RouterLink
               to="/news"
-              class="uppercase flex flex-row gap-2 font- items-center mt-6"
+              class="soi-link font-semibold flex flex-row gap-2 items-center mt-6"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

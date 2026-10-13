@@ -1,69 +1,55 @@
 <template>
-  <div class="mb-8 p-6 bg-gray-50 border border-gray-200 border-l-4 border-l-[#f79e87] rounded-xl shadow-sm">
-    <!-- Title -->
-    <h2 class="text-xl font-semibold text-gray-900 mb-2">
-      Genera Overview
-    </h2>
-
-    <!-- Description -->
-    <p class="text-sm text-gray-700 leading-relaxed mb-4">
-      A summary of every genus in the database. Click any row to open its full page. The columns cover:
-    </p>
-
-    <!-- Key points -->
-    <div class="grid sm:grid-cols-2 gap-x-8 gap-y-2.5 text-sm text-gray-700 mb-5">
-      <div class="flex gap-2">
-        <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#f79e87] shrink-0"></span>
-        <p><span class="font-medium text-gray-900">Authorship</span> — who described the genus.</p>
-      </div>
-      <div class="flex gap-2">
-        <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#f79e87] shrink-0"></span>
-        <p><span class="font-medium text-gray-900">Global richness</span> — total species worldwide.</p>
-      </div>
-      <div class="flex gap-2">
-        <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#f79e87] shrink-0"></span>
-        <p><span class="font-medium text-gray-900">Species in Italy</span> — richness of the Italian fauna.</p>
-      </div>
-      <div class="flex gap-2">
-        <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#f79e87] shrink-0"></span>
-        <p><span class="font-medium text-gray-900">Identification keys</span> — in English (EN) and Italian (IT).</p>
-      </div>
+  <header class="mb-8">
+    <p class="soi-eyebrow">{{ t('eyebrow') }}</p>
+    <div class="mt-3 grid lg:grid-cols-12 gap-6 lg:gap-12 items-end">
+      <h1 class="lg:col-span-6 soi-serif text-4xl sm:text-5xl font-semibold leading-[1.05] tracking-tight">
+        {{ t('title') }}
+      </h1>
+      <p class="lg:col-span-6 text-lg leading-relaxed soi-muted">
+        {{ t('lede') }}
+      </p>
     </div>
 
-    <!-- Realm legend (doubles as the key for the distribution grid) -->
-    <div class="mb-4">
-      <p class="text-xs font-medium text-gray-500 mb-2">Biogeographic distribution — realm codes used in the table:</p>
-      <div class="flex flex-wrap gap-1.5">
-        <span
-          v-for="r in realms"
-          :key="r.abbr"
-          class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs"
-          :class="r.class"
-        >
-          <span class="font-semibold">{{ r.abbr }}</span>
-          <span class="opacity-80">{{ r.full }}</span>
-        </span>
+    <dl class="mt-8 flex flex-wrap gap-x-10 gap-y-4 border-y soi-rule py-4">
+      <div
+        v-for="s in summary"
+        :key="s.label"
+        class="flex items-baseline gap-2"
+      >
+        <dd class="soi-serif text-3xl font-semibold tabular-nums">{{ s.value }}</dd>
+        <dt class="text-sm soi-muted">{{ s.label }}</dt>
       </div>
-    </div>
-
-    <!-- Tip -->
-    <p class="text-xs text-gray-500 leading-relaxed">
-      In the table below, click a colored realm code (e.g.
-      <span class="font-semibold text-[#8f3f3f]">Pal</span>) to open its distribution map.
-      Greyed codes mark realms where the genus has not been recorded.
-    </p>
-  </div>
+      <div class="ml-auto self-center text-sm soi-muted">
+        <span class="font-semibold text-[color:var(--soi-ink)]">{{ t('tip') }}</span>
+        {{ t('tipText') }}
+      </div>
+    </dl>
+  </header>
 </template>
 
 <script setup>
-// Realm palette mirrors the distribution grid in the table.
-// If you later move this to a shared constants file, import it in both places.
-const realms = [
-  { abbr: 'Pal', full: 'Palearctic', class: 'bg-[#f2d6d6] text-[#8f3f3f]' },
-  { abbr: 'Nea', full: 'Nearctic', class: 'bg-[#e8efd1] text-[#5f6f2f]' },
-  { abbr: 'Neo', full: 'Neotropical', class: 'bg-[#ece5f0] text-[#715c74]' },
-  { abbr: 'Afr', full: 'Afrotropical', class: 'bg-[#dde6f0] text-[#4e637f]' },
-  { abbr: 'Ind', full: 'Indomalayan', class: 'bg-[#f2e3cc] text-[#8b6a3e]' },
-  { abbr: 'Aus', full: 'Australasian', class: 'bg-[#f6e2cc] text-[#9a5f24]' }
-];
+import { useT } from '@/utils/soiLang.js'
+
+const t = useT({
+  en: {
+    eyebrow: 'Genera',
+    title: 'The genera of Italian hoverflies',
+    lede: 'Every genus in the catalogue, counted live from TaxonWorks: author, subfamily, species in Italy and identification keys. Genera marked “Account” also have a full written account with world richness and realms.',
+    tip: 'Tip:',
+    tipText: 'click a realm code to see its map.'
+  },
+  it: {
+    eyebrow: 'Generi',
+    title: 'I generi dei sirfidi italiani',
+    lede: 'Tutti i generi del catalogo, conteggiati in tempo reale da TaxonWorks: autore, sottofamiglia, specie in Italia e chiavi di identificazione. I generi con l’etichetta “Scheda” hanno anche una scheda completa con ricchezza mondiale e regioni biogeografiche.',
+    tip: 'Suggerimento:',
+    tipText: 'clicca il codice di una regione per vederne la mappa.'
+  }
+})
+defineProps({
+  summary: {
+    type: Array,
+    default: () => []
+  }
+})
 </script>

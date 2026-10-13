@@ -34,7 +34,7 @@
               class="w-full"
             >
               <div class="font-bold py-3 px-4 border-b bg-base-background">
-                {{ item.label }}
+                {{ menuLabel(item.label) }}
               </div>
               <div>
                 <div
@@ -46,7 +46,7 @@
                     :to="item.link"
                     @click="() => (isMenuVisible = false)"
                   >
-                    {{ item.label }}
+                    {{ menuLabel(item.label) }}
                   </RouterLink>
                 </div>
               </div>
@@ -57,8 +57,11 @@
               class="text-base-content w-full p-4 py-3 block box-border"
               @click="() => (isMenuVisible = false)"
             >
-              {{ item.label }}
+              {{ menuLabel(item.label) }}
             </RouterLink>
+          </li>
+          <li class="px-4 py-3 border-b border-b-base-border">
+            <LangSwitch />
           </li>
           <li>
             <ClientOnly>
@@ -83,6 +86,8 @@
 <script setup>
 import { ref } from 'vue'
 import SwitchTheme from '../SwitchTheme.vue'
+import LangSwitch from '../Layout/LangSwitch.vue'
+import { menuLabel } from '@/utils/soiLang.js'
 
 const { header_links } = __APP_ENV__
 const isMenuVisible = ref(false)

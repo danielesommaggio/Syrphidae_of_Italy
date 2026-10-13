@@ -27,6 +27,7 @@
         <div
           class="flex items-center border-l ml-6 pl-6 border-base-muted border-opacity-50"
         >
+          <LangSwitch class="mr-3" />
           <ClientOnly>
             <SwitchTheme class="text-primary-content" />
           </ClientOnly>
@@ -44,6 +45,7 @@
 
 <script setup>
 import SwitchTheme from '../SwitchTheme.vue'
+import LangSwitch from './LangSwitch.vue'
 import NavbarMenu from '../Navbar/NavbarMenu.vue'
 import NavbarMobile from '../Navbar/NavbarMobile.vue'
 import { isValidUrl } from '@/utils/url'

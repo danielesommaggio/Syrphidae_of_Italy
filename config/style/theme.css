@@ -1,46 +1,338 @@
+/*
+  Syrphidae of Italy — "field guide" theme
+  Paper cream, ink-olive text, hoverfly yellow, Mediterranean accents.
+*/
 :root {
-  --color-primary: 250, 208, 44;
-  --color-primary-content: 0, 0, 0;
+  --color-primary: 250, 247, 239;          /* header: paper */
+  --color-primary-content: 34, 40, 28;     /* header text: ink */
 
-  --color-secondary: 14, 165, 233;
+  --color-secondary: 154, 106, 18;         /* links/buttons: deep amber */
   --color-secondary-content: 255, 255, 255;
+  --color-secondary-on-dark: 240, 196, 64;
 
-  --color-base-foreground: 255, 255, 255;
-  --color-base-background: 245, 247, 251;
-  --color-base-muted: 226, 232, 240;
-  --color-base-soft: 156, 163, 175;
-  --color-base-lighter: 55, 65, 81;
-  --color-base-border: 203, 213, 225;
-  --color-base-content: 0, 0, 0;
+  --color-base-foreground: 255, 253, 248;
+  --color-base-background: 245, 241, 231;
+  --color-base-muted: 232, 226, 211;
+  --color-base-soft: 120, 116, 98;
+  --color-base-lighter: 70, 72, 58;
+  --color-base-border: 220, 212, 192;
+  --color-base-content: 34, 40, 28;
 
-  --color-map-georeference: 239, 68, 68;
-  --color-map-aggregate: 3, 115, 22;
-  --color-map-asserted: 249, 115, 22;
-  --color-map-type-material: 51, 136, 255;
-  --color-map-collection-object: 239, 68, 68;
+  --color-map-georeference: 196, 84, 48;
+  --color-map-aggregate: 79, 93, 47;
+  --color-map-asserted: 222, 160, 26;
+  --color-map-type-material: 51, 112, 160;
+  --color-map-collection-object: 196, 84, 48;
 
-  --color-scrollbar-thumb: 156, 163, 175;
-  --color-scrollbar-track: 229, 231, 235;
+  --color-scrollbar-thumb: 168, 160, 136;
+  --color-scrollbar-track: 236, 231, 218;
 
   --color-map-shape-opacity: 0.5;
-  --color-map-marker-opacity: 0.75;
+  --color-map-marker-opacity: 0.8;
+
+  /* SoI palette (used by the custom pages) */
+  --soi-paper: #faf7ef;
+  --soi-paper-2: #f2ecdd;
+  --soi-ink: #22281c;
+  --soi-ink-soft: #5b5e4c;
+  --soi-rule: #ddd4bf;
+  --soi-yellow: #f0b81f;
+  --soi-yellow-deep: #9a6a12;
+  --soi-olive: #4f5d2f;
+  --soi-terra: #b4532f;
+  --soi-sea: #3c6e86;
+  --soi-card: #fffdf8;
 }
 
 .dark {
-  --color-primary: 23, 23, 23;
-  --color-primary-content: 255, 255, 255;
-  
-  --color-secondary: 14, 165, 233;
-  --color-secondary-content: 255, 255, 255;
+  --color-primary: 26, 28, 22;
+  --color-primary-content: 240, 236, 222;
 
-  --color-base-background: 23, 23, 23;
-  --color-base-foreground: 38,38,38;
-  --color-base-muted: 48, 48, 48;
-  --color-base-soft: 200, 200, 200;
-  --color-base-lighter: 220, 220, 220;
-  --color-base-border: 38, 38, 38;
-  --color-base-content: 255, 255, 255;
+  --color-secondary: 240, 196, 64;
+  --color-secondary-content: 26, 28, 22;
+  --color-secondary-on-dark: 240, 196, 64;
 
-  --color-scrollbar-thumb: 156, 163, 175;
-  --color-scrollbar-track: 55, 65, 81;
+  --color-base-background: 22, 24, 19;
+  --color-base-foreground: 32, 35, 28;
+  --color-base-muted: 48, 52, 42;
+  --color-base-soft: 176, 172, 152;
+  --color-base-lighter: 214, 210, 192;
+  --color-base-border: 56, 60, 48;
+  --color-base-content: 240, 236, 222;
+
+  --color-scrollbar-thumb: 120, 120, 104;
+  --color-scrollbar-track: 40, 42, 34;
+
+  --soi-paper: #16180f;
+  --soi-paper-2: #1d2017;
+  --soi-ink: #efeadb;
+  --soi-ink-soft: #b3ae97;
+  --soi-rule: #3a3e31;
+  --soi-yellow: #f0c040;
+  --soi-yellow-deep: #f0c040;
+  --soi-olive: #a3b46e;
+  --soi-terra: #e08a62;
+  --soi-sea: #7fb3cc;
+  --soi-card: #20231b;
+}
+
+body {
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+}
+
+/* ---------- Header: paper bar with a hoverfly-stripe rule ---------- */
+.tp-header {
+  height: auto !important;
+  min-height: 3.5rem;
+  box-shadow: none !important;
+  border-bottom: 1px solid rgb(var(--color-base-border));
+}
+.tp-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--soi-yellow) 0 22px,
+    var(--soi-ink) 22px 30px
+  );
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 5;
+}
+.tp-header > .container > a > span {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.tp-header-nav {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+.tp-header-nav a.router-link-exact-active {
+  box-shadow: inset 0 -2px 0 var(--soi-yellow);
+}
+
+/* ---------- Shared SoI building blocks ---------- */
+.soi {
+  background: var(--soi-paper);
+  color: var(--soi-ink);
+}
+.soi *,
+.soi *::before,
+.soi *::after {
+  box-sizing: border-box;
+}
+.soi-serif {
+  font-family: 'Fraunces', Georgia, serif;
+  font-optical-sizing: auto;
+}
+.soi-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--soi-yellow-deep);
+}
+.soi-muted {
+  color: var(--soi-ink-soft);
+}
+.soi-rule {
+  border-color: var(--soi-rule);
+}
+.soi-card {
+  background: var(--soi-card);
+  border: 1px solid var(--soi-rule);
+  border-radius: 6px;
+}
+.soi-link {
+  color: var(--soi-yellow-deep);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.soi-link:hover {
+  color: var(--soi-ink);
+}
+.soi-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.soi-btn-ink {
+  background: var(--soi-ink);
+  color: var(--soi-paper);
+}
+.soi-btn-ink:hover {
+  background: var(--soi-olive);
+}
+.soi-btn-line {
+  border: 1px solid var(--soi-ink);
+  color: var(--soi-ink);
+}
+.soi-btn-line:hover {
+  background: var(--soi-ink);
+  color: var(--soi-paper);
+}
+.soi-stripe {
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--soi-yellow) 0 22px,
+    var(--soi-ink) 22px 30px
+  );
+}
+.soi-plate {
+  background: var(--soi-card);
+  border: 1px solid var(--soi-rule);
+  padding: 10px 10px 0;
+  box-shadow: 0 1px 0 var(--soi-rule), 0 18px 40px -24px rgba(34, 40, 28, 0.45);
+}
+
+/* Search box inside SoI pages (wraps the stock autocomplete) */
+.soi-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--soi-card);
+  border: 1.5px solid var(--soi-ink);
+  border-radius: 999px;
+  padding: 0.35rem 0.4rem 0.35rem 1.1rem;
+}
+.soi-search input {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  font-size: 1rem;
+  color: var(--soi-ink);
+}
+.soi-search ul {
+  z-index: 60 !important;
+}
+
+/* Loading shimmer for numbers */
+.soi-skel {
+  display: inline-block;
+  min-width: 3ch;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--soi-paper-2), var(--soi-rule), var(--soi-paper-2));
+  background-size: 200% 100%;
+  animation: soi-shimmer 1.2s infinite linear;
+  color: transparent;
+}
+@keyframes soi-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* Footer */
+.footer {
+  background: var(--soi-ink) !important;
+  color: #e9e4d3 !important;
+  border-top: 6px solid transparent;
+  border-image: repeating-linear-gradient(90deg, var(--soi-yellow) 0 22px, #11140d 22px 30px) 6;
+}
+.dark .footer {
+  background: #0f110b !important;
+}
+.footer a {
+  color: var(--soi-yellow) !important;
+}
+
+/* ---------- Stock TaxonPages components, SoI skin ---------- */
+.tp-card {
+  border: 1px solid var(--soi-rule) !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+}
+.tp-button.bg-primary-color {
+  background: var(--soi-ink) !important;
+  color: var(--soi-paper) !important;
+  border-radius: 999px;
+}
+.tp-button.bg-secondary-color {
+  border-radius: 999px;
+}
+input[type='text'].border-base-border:focus,
+.tp-autocomplete__input:focus {
+  outline: none;
+  border-color: var(--soi-ink) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--soi-yellow) 40%, transparent) !important;
+}
+.soi-module label {
+  font-weight: 600;
+  color: var(--soi-ink);
+}
+.soi-module table thead th,
+.soi-module thead tr {
+  background: var(--soi-paper-2);
+}
+.prose {
+  --tw-prose-headings: var(--soi-ink);
+  --tw-prose-body: var(--soi-ink);
+}
+.prose :where(h1, h2, h3) {
+  font-family: 'Fraunces', Georgia, serif;
+}
+
+/* Taxon pages: tabs and panel headers */
+.tp-tab-item a {
+  font-weight: 600;
+  color: var(--soi-ink-soft) !important;
+}
+.tp-tab-item a:hover {
+  color: var(--soi-ink) !important;
+}
+.tp-tab-item a.router-link-active,
+.tp-tab-item a.text-secondary-color,
+.tp-tab-item a[aria-current] {
+  color: var(--soi-ink) !important;
+  border-color: var(--soi-yellow) !important;
+  border-bottom-width: 3px !important;
+}
+.tp-card-header {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600 !important;
+  font-size: 1.08rem;
+  border-color: var(--soi-rule) !important;
+}
+.breadcrumb {
+  row-gap: 0.15rem;
+}
+
+/* Keep the menu on one line on smaller laptops */
+@media (max-width: 1240px) {
+  .tp-header-nav > div {
+    gap: 1.1rem !important;
+  }
+  .tp-header > .container > a > span {
+    font-size: 1rem;
+  }
+}
+@media (max-width: 1300px) {
+  .tp-header > .container > a > span {
+    display: none;
+  }
+}
+
+/* Atlas ramp in dark mode (more records = brighter) */
+.dark .soi-atlas-map {
+  --soi-ramp-0: #2a2c24 !important;
+  --soi-ramp-1: #4a3f1c !important;
+  --soi-ramp-2: #7a6220 !important;
+  --soi-ramp-3: #b08a24 !important;
+  --soi-ramp-4: #dcb03a !important;
+  --soi-ramp-5: #f6d77a !important;
 }

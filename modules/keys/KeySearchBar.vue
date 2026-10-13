@@ -5,7 +5,7 @@
       @input="$emit('update:modelValue', $event.target.value)"
       type="text"
       :placeholder="placeholder"
-      class="border border-base-muted rounded-md pl-3 pr-9 py-2 w-full focus:outline-none focus:ring-2 focus:ring-secondary/40"
+      class="box-border border border-base-muted rounded-md pl-3 pr-9 py-2 w-full focus:outline-none focus:ring-2 focus:ring-secondary/40"
     />
     <button
       v-if="modelValue"

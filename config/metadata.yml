@@ -1,8 +1,28 @@
 ---
 metadata:
   - name: description
-    content: TaxonPages is a tool to serve taxon pages.
+    content: Syrphidae of Italy (SoI) — the open catalogue of Italian hoverflies (Diptera, Syrphidae) with names, synonyms, literature, specimen records, distribution maps and identification keys.
   - name: keywords
-    content: taxonpages, species, sfg
+    content: Syrphidae, hoverflies, flower flies, sirfidi, Italy, Italia, Diptera, taxonomy, identification keys, distribution, TaxonWorks
   - name: robots
     content: follow
+  - name: theme-color
+    content: '#faf7ef'
+  - property: og:type
+    content: website
+  - property: og:site_name
+    content: Syrphidae of Italy (SoI)
+  - property: og:title
+    content: Syrphidae of Italy (SoI)
+  - property: og:description
+    content: The open catalogue of Italian hoverflies — names, literature, records, maps and identification keys.
+  - property: og:image
+    content: https://syrphidaeitaly.com/images/og-soi.jpg
+  - property: og:image:width
+    content: '1200'
+  - property: og:image:height
+    content: '630'
+  - name: twitter:card
+    content: summary_large_image
+  - name: twitter:image
+    content: https://syrphidaeitaly.com/images/og-soi.jpg

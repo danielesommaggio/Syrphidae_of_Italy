@@ -1,11 +1,10 @@
 <template>
-  <div class="container mx-auto box-border">
-    <div class="px-4 md:px-0 mt-4 mb-6">
-      <h1 class="text-4xl font-bold">Search the Darwin Core</h1>
-      <h2>
-        Filter OTUs by scientific name, author, and distribution (Darwin Core)
-      </h2>
-    </div>
+  <SoiMasthead
+    :eyebrow="mt('eyebrow')"
+    :title="mt('title')"
+    :lede="mt('lede')"
+  />
+  <div class="soi-module container mx-auto box-border px-4 py-8">
     <ClientOnly>
       <VSpinner
         v-if="isLoading"
@@ -86,6 +85,13 @@
 </template>
 
 <script setup>
+import { useT as useMastheadT } from '@/utils/soiLang.js'
+
+const mt = useMastheadT({
+  en: { eyebrow: 'Occurrence data', title: 'Search the records', lede: 'Filter specimen and observation records by scientific name, author and distribution, and export them in Darwin Core.' },
+  it: { eyebrow: 'Dati di presenza', title: 'Cerca nei record', lede: 'Filtra i record di esemplari e osservazioni per nome scientifico, autore e distribuzione, ed esportali in Darwin Core.' }
+})
+
 import { onMounted, ref, computed } from 'vue'
 import { makeAPIRequest } from '@/utils'
 import { useRoute, useRouter } from 'vue-router'

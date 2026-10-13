@@ -1,44 +1,60 @@
 <template>
-  <section>
-    <div class="container max-w-screen-xl mx-auto py-10">
+  <section class="soi min-h-screen">
+    <div class="container max-w-screen-xl mx-auto px-4 py-10 sm:py-14">
       <!-- Intro component -->
-      <TaxaTableIntro />
+      <TaxaTableIntro :summary="introSummary" />
 
       <!-- Search bar -->
-      <div class="mb-3 flex flex-wrap gap-3 items-center">
+      <div class="mb-4 flex flex-wrap gap-3 items-center">
         <div class="relative w-full sm:w-80">
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Search by genus..."
-            class="border border-gray-300 rounded-md pl-3 pr-9 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 w-full"
+            :placeholder="t('filter')"
+            :aria-label="t('filter')"
+            class="soi-input w-full pl-4 pr-9 py-2"
           />
           <button
             v-if="searchQuery"
             @click="searchQuery = ''"
-            class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+            class="absolute inset-y-0 right-0 flex items-center pr-3 soi-muted hover:text-[color:var(--soi-ink)]"
             title="Clear search"
           >
             ✕
           </button>
         </div>
+        <select
+          v-model="activeSubfamily"
+          class="soi-input px-4 py-2 pr-8 text-sm"
+          :aria-label="t('subfamily')"
+        >
+          <option :value="null">{{ t('allSubfamilies') }}</option>
+          <option
+            v-for="s in subfamilies"
+            :key="s"
+            :value="s"
+          >
+            {{ s }}
+          </option>
+        </select>
+        <span class="text-sm soi-muted">{{ t('showing', { n: sortedTaxaList.length, total: taxaList.length }) }}</span>
       </div>
 
       <!-- Realm filter chips -->
       <div class="mb-4 flex flex-wrap gap-2 items-center">
         <button
           @click="activeRegion = null"
-          class="px-2.5 py-1 text-xs font-medium rounded-md transition-colors"
-          :class="!activeRegion ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+          class="px-3 py-1 text-xs font-semibold rounded-full transition-colors border"
+          :class="!activeRegion ? 'bg-[color:var(--soi-ink)] text-[color:var(--soi-paper)] border-transparent' : 'soi-rule soi-muted hover:text-[color:var(--soi-ink)]'"
         >
-          All realms
+          {{ t('allRealms') }}
         </button>
         <button
           v-for="region in availableRegions"
           :key="region"
           @click="toggleRegion(region)"
           :title="`Filter by ${regionMap[region]?.full || region}`"
-          class="px-2.5 py-1 text-xs font-medium rounded-md transition-colors"
+          class="px-3 py-1 text-xs font-semibold rounded-full transition-colors"
           :class="[
             distributionClassMap[region],
             activeRegion === region ? 'ring-2 ring-inset ring-black/40' : ''
@@ -49,32 +65,32 @@
       </div>
 
       <div class="overflow-x-auto">
-        <VCard class="shadow-sm border border-gray-200 rounded-xl">
+        <VCard class="soi-table-card">
           <VCardContent>
             <VTable class="w-full table-auto text-sm">
               <!-- Table Header -->
               <VTableHeader>
-                <VTableHeaderRow class="bg-gray-50 border-b">
-                  <VTableHeaderCell class="text-gray-600 sticky top-0 bg-gray-50 z-10">
+                <VTableHeaderRow class="soi-thead border-b">
+                  <VTableHeaderCell class="soi-muted sticky top-0 soi-thead z-10">
                     <button type="button" @click="sortBy('taxonName')"
-                      class="font-semibold text-xs uppercase tracking-wide flex items-center gap-1 hover:text-gray-900">
-                      Genus <span class="text-gray-400">{{ sortIndicator('taxonName') }}</span>
+                      class="font-semibold text-xs uppercase tracking-wide flex items-center gap-1 hover:text-[color:var(--soi-ink)]">
+                      {{ t('colGenus') }} <span class="opacity-50">{{ sortIndicator('taxonName') }}</span>
                     </button>
                   </VTableHeaderCell>
-                  <VTableHeaderCell class="text-center sticky top-0 bg-gray-50 z-10">
+                  <VTableHeaderCell class="text-center sticky top-0 soi-thead z-10">
                     <button type="button" @click="sortBy('numSpecies')"
-                      class="font-semibold text-xs uppercase tracking-wide flex items-center gap-1 mx-auto hover:text-gray-900">
-                      # Species <span class="text-gray-400">{{ sortIndicator('numSpecies') }}</span>
+                      class="font-semibold text-xs uppercase tracking-wide flex items-center gap-1 mx-auto hover:text-[color:var(--soi-ink)]">
+                      {{ t('colWorld') }} <span class="opacity-50">{{ sortIndicator('numSpecies') }}</span>
                     </button>
                   </VTableHeaderCell>
-                  <VTableHeaderCell class="text-center sticky top-0 bg-gray-50 z-10">
+                  <VTableHeaderCell class="text-center sticky top-0 soi-thead z-10">
                     <button type="button" @click="sortBy('numSpeciesIta')"
-                      class="font-semibold text-xs uppercase tracking-wide flex items-center gap-1 mx-auto hover:text-gray-900">
-                      # Italy <span class="text-gray-400">{{ sortIndicator('numSpeciesIta') }}</span>
+                      class="font-semibold text-xs uppercase tracking-wide flex items-center gap-1 mx-auto hover:text-[color:var(--soi-ink)]">
+                      {{ t('colItaly') }} <span class="opacity-50">{{ sortIndicator('numSpeciesIta') }}</span>
                     </button>
                   </VTableHeaderCell>
-                  <VTableHeaderCell class="font-semibold text-xs uppercase tracking-wide text-gray-600 text-center sticky top-0 bg-gray-50 z-10">Distribution</VTableHeaderCell>
-                  <VTableHeaderCell class="font-semibold text-xs uppercase tracking-wide text-gray-600 text-center w-32 sticky top-0 bg-gray-50 z-10">Key</VTableHeaderCell>
+                  <VTableHeaderCell class="font-semibold text-xs uppercase tracking-wide soi-muted text-center sticky top-0 soi-thead z-10">{{ t('colRealms') }}</VTableHeaderCell>
+                  <VTableHeaderCell class="font-semibold text-xs uppercase tracking-wide soi-muted text-center w-32 sticky top-0 soi-thead z-10">{{ t('colKeys') }}</VTableHeaderCell>
                 </VTableHeaderRow>
               </VTableHeader>
 
@@ -84,19 +100,27 @@
                   v-for="(item, i) in sortedTaxaList"
                   :key="item.taxonName"
                   @click="goToTaxon(item)"
-                  class="border-b last:border-0 border-l-2 border-transparent transition-colors cursor-pointer hover:bg-[#fdf3ef] hover:border-[#f79e87]"
-                  :class="i % 2 === 1 ? 'bg-[#faf8f6]' : ''"
+                  class="border-b last:border-0 border-l-2 border-transparent transition-colors cursor-pointer soi-row"
+                  :class="i % 2 === 1 ? 'soi-row-alt' : ''"
                 >
                   <!-- Genus + Author -->
                   <VTableBodyCell>
                     <RouterLink
                       :to="{ name: 'taxa-name', params: { name: item.taxonName } }"
-                      class="font-semibold text-sm text-[#c85a3c] hover:text-[#9c3f24] transition-colors"
+                      class="soi-serif text-[1.05rem] font-semibold text-[color:var(--soi-ink)] hover:underline underline-offset-4"
                       @click.stop
                     >
                       <span class="italic" v-html="item.taxonName"></span>
                     </RouterLink>
-                    <div v-if="item.author" class="text-xs text-gray-500 mt-0.5">{{ item.author }}</div>
+                    <span
+                      v-if="item.hasAccount"
+                      class="soi-acct"
+                      :title="t('hasAccount')"
+                      >{{ t('account') }}</span
+                    >
+                    <div class="text-xs soi-muted mt-0.5">
+                      {{ item.author }}<template v-if="item.subfamily"> · {{ item.subfamily }}</template>
+                    </div>
                   </VTableBodyCell>
 
                   <!-- # Species -->
@@ -118,7 +142,7 @@
                         class="inline-flex items-center justify-center w-9 py-0.5 text-[11px] font-medium rounded transition-colors"
                         :class="hasRegion(item, region)
                           ? `${distributionClassMap[region]} cursor-pointer hover:ring-1 hover:ring-inset hover:ring-black/10`
-                          : 'text-gray-300'"
+                          : 'opacity-30'"
                       >
                         {{ regionMap[region]?.abbr || region }}
                       </span>
@@ -131,7 +155,7 @@
                       <!-- EN -->
                       <RouterLink
                         :to="item.keyLinkEN || ''"
-                        class="inline-flex items-center gap-1 text-xs text-gray-800 hover:text-amber-600 transition transform hover:scale-110"
+                        class="inline-flex items-center gap-1 text-xs text-[color:var(--soi-ink)] hover:text-[color:var(--soi-yellow-deep)] transition transform hover:scale-110"
                         :class="{ 'opacity-25 pointer-events-none cursor-default': !item.keyLinkEN }"
                         :title="item.keyLinkEN ? 'Open English key' : 'English key not available'"
                         @click.stop
@@ -149,7 +173,7 @@
                       <!-- IT -->
                       <RouterLink
                         :to="item.keyLinkIT || ''"
-                        class="inline-flex items-center gap-1 text-xs text-gray-800 hover:text-amber-600 transition transform hover:scale-110"
+                        class="inline-flex items-center gap-1 text-xs text-[color:var(--soi-ink)] hover:text-[color:var(--soi-yellow-deep)] transition transform hover:scale-110"
                         :class="{ 'opacity-25 pointer-events-none cursor-default': !item.keyLinkIT }"
                         :title="item.keyLinkIT ? 'Open Italian key' : 'Italian key not available'"
                         @click.stop
@@ -167,9 +191,16 @@
                   </VTableBodyCell>
                 </VTableBodyRow>
 
+                <!-- Loading -->
+                <VTableBodyRow v-if="genera.loading">
+                  <VTableBodyCell colspan="5" class="text-center text-sm soi-muted py-10">
+                    {{ t('loading') }}
+                  </VTableBodyCell>
+                </VTableBodyRow>
+
                 <!-- Empty state -->
-                <VTableBodyRow v-if="!sortedTaxaList.length">
-                  <VTableBodyCell colspan="5" class="text-center text-sm text-gray-500 py-10">
+                <VTableBodyRow v-else-if="!sortedTaxaList.length">
+                  <VTableBodyCell colspan="5" class="text-center text-sm soi-muted py-10">
                     No genera match the current filters. Clear the search or realm filter to see all genera.
                   </VTableBodyCell>
                 </VTableBodyRow>
@@ -177,10 +208,10 @@
                 <!-- Totals -->
                 <VTableBodyRow
                   v-if="sortedTaxaList.length"
-                  class="border-t-2 border-gray-300 bg-gray-50 font-semibold text-gray-700"
+                  class="border-t-2 soi-rule soi-thead font-semibold"
                 >
                   <VTableBodyCell class="text-sm">
-                    Total — {{ totals.genera }} {{ totals.genera === 1 ? 'genus' : 'genera' }}
+                    {{ t('total') }} — {{ totals.genera }} {{ totals.genera === 1 ? t('genus') : t('genera') }}
                   </VTableBodyCell>
                   <VTableBodyCell class="text-center">{{ totals.species }}</VTableBodyCell>
                   <VTableBodyCell class="text-center">{{ totals.italy }}</VTableBodyCell>
@@ -200,29 +231,29 @@
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       @click.self="modalRegion = null"
     >
-      <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 relative">
+      <div class="soi-card shadow-xl max-w-md w-full p-6 relative text-[color:var(--soi-ink)]">
         <button
           @click="modalRegion = null"
-          class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+          class="absolute top-3 right-3 soi-muted hover:text-[color:var(--soi-ink)]"
           title="Close"
         >
           ✕
         </button>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">
+        <h3 class="soi-serif text-2xl font-semibold mb-1">
           {{ regionMap[modalRegion]?.full || modalRegion }}
         </h3>
-        <p class="text-sm text-gray-600">
+        <p class="text-sm soi-muted">
           Abbreviation for the {{ regionMap[modalRegion]?.full || modalRegion }} biogeographic realm.
         </p>
         <div v-if="regionImages[modalRegion]" class="mt-4">
           <img
             :src="regionImages[modalRegion].src"
             :alt="modalRegion"
-            class="w-full rounded-lg border border-gray-200"
+            class="w-full rounded border soi-rule"
           />
 
           <p
-            class="text-[10px] text-gray-500 mt-2 leading-snug"
+            class="text-[10px] soi-muted mt-2 leading-snug"
             v-html="regionImages[modalRegion].attribution"
           />
         </div>
@@ -235,13 +266,29 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import TaxaTableIntro from './TaxaTableIntro.vue';
-import taxaListRaw from '/pages/taxa/constants/taxa.js';
-// ⚠️ Adjust this path to match the one the keys panel uses.
-import TaxonWorks from '@/modules/otus/services/TaxonWorks.js';
+import { useGenera } from './useGenera.js';
+import { useT } from '@/utils/soiLang.js';
+import { useHead } from '@unhead/vue';
+
+const t = useT({
+  en: {
+    filter: 'Filter genera…', subfamily: 'Subfamily', allSubfamilies: 'All subfamilies', allRealms: 'All realms',
+    showing: '{n} of {total} genera', account: 'Account', hasAccount: 'Full genus account available',
+    loading: 'Loading genera from TaxonWorks…', genera: 'genera', genus: 'genus',
+    colWorld: 'World', colItaly: 'Italy', colRealms: 'Realms', colKeys: 'Keys', colGenus: 'Genus', total: 'Total',
+    speciesWorld: 'species worldwide (genera with an account)', speciesItaly: 'species in Italy'
+  },
+  it: {
+    filter: 'Filtra i generi…', subfamily: 'Sottofamiglia', allSubfamilies: 'Tutte le sottofamiglie', allRealms: 'Tutte le regioni',
+    showing: '{n} di {total} generi', account: 'Scheda', hasAccount: 'Scheda completa del genere disponibile',
+    loading: 'Caricamento dei generi da TaxonWorks…', genera: 'generi', genus: 'genere',
+    colWorld: 'Mondo', colItaly: 'Italia', colRealms: 'Regioni biogeogr.', colKeys: 'Chiavi', colGenus: 'Genere', total: 'Totale',
+    speciesWorld: 'specie nel mondo (generi con scheda)', speciesItaly: 'specie in Italia'
+  }
+});
 
 const router = useRouter();
 
-const controller = new AbortController();
 
 const modalRegion = ref(null); // region clicked for modal
 const searchQuery = ref('');
@@ -369,80 +416,21 @@ function getSortedRegions(distribution) {
   return [...distribution].sort((a, b) => (regionMap[a]?.full || a).localeCompare(regionMap[b]?.full || b));
 }
 
-// Build taxa list — now a ref so key links can be filled in asynchronously.
-// keyLinkEN / keyLinkIT start null (link disabled) and are populated on mount.
-const taxaList = ref(
-  taxaListRaw.map(taxon => ({
-    ...taxon,
-    numSpecies: parseNumSpecies(taxon),
-    numSpeciesIta: parseNumSpeciesIta(taxon),
-    keyLinkEN: null,
-    keyLinkIT: null
-  }))
+useHead({ title: () => `${t('colGenus') === 'Genere' ? 'Generi' : 'Genera'} — Syrphidae of Italy` });
+
+// Live list of genera (TaxonWorks + hand-written accounts)
+const genera = useGenera();
+const taxaList = computed(() => genera.list);
+const activeSubfamily = ref(null);
+const subfamilies = computed(() =>
+  [...new Set(genera.list.map((g) => g.subfamily).filter(Boolean))].sort()
 );
 
-// --- Dynamic key resolution (mirrors the keys panel) -------------------------
-
-// Flatten a getKeys() response into a single list of
-// { id, label, kind, is_media, scope } where scope is 'scoped' | 'in'.
-// 'scoped' = the genus's OWN keys; 'in' = parent keys the genus appears within.
-function collectKeys(data) {
-  const tag = (arr, kind, scope, mapFn) =>
-    (arr || []).map(x => ({ ...mapFn(x), kind, scope }));
-
-  return [
-    ...tag(data.leads?.scoped, 'lead', 'scoped', l => ({ id: l.id, label: l.text })),
-    ...tag(data.leads?.in, 'lead', 'in', l => ({ id: l.id, label: l.text })),
-    ...tag(data.observation_matrices?.scoped, 'matrix', 'scoped', m => ({ id: m.id, label: m.name, is_media: m.is_media })),
-    ...tag(data.observation_matrices?.in, 'matrix', 'in', m => ({ id: m.id, label: m.name, is_media: m.is_media }))
-  ];
-}
-
-// Build the same named-route objects the keys panel uses
-function toRoute(key) {
-  if (key.kind === 'lead') return { name: 'dichotomous-key', params: { id: key.id } };
-  return { name: key.is_media ? 'image-matrices-id' : 'interactive-key', params: { id: key.id } };
-}
-
-// Pick the genus's own EN / IT keys by their (EN) / (IT) label tag.
-// Only 'scoped' keys are this genus's own — 'in' keys are parent keys it appears in,
-// so they're excluded here (they'd otherwise leak the family-level Italian key).
-function pickLanguageKeys(keys) {
-  const own = keys.filter(k => k.scope === 'scoped');
-  const en = own.find(k => /\(en\)/i.test(k.label || ''));
-  const it = own.find(k => /\(it\)/i.test(k.label || ''));
-  return {
-    keyLinkEN: en ? toRoute(en) : null,
-    keyLinkIT: it ? toRoute(it) : null
-  };
-}
-
-// Fetch keys for every genus by its otuId and enrich the reactive list in place
-async function resolveKeys() {
-  await Promise.all(
-    taxaList.value.map(async (taxon) => {
-      if (!taxon.otuId) return;
-      try {
-        const { data } = await TaxonWorks.getKeys(taxon.otuId, { signal: controller.signal });
-        const { keyLinkEN, keyLinkIT } = pickLanguageKeys(collectKeys(data));
-        taxon.keyLinkEN = keyLinkEN;
-        taxon.keyLinkIT = keyLinkIT;
-      } catch {
-        // Leave links null → they stay disabled rather than pointing at a stale key.
-      }
-    })
-  );
-}
-
-// --- Lifecycle ---------------------------------------------------------------
-
 onMounted(() => {
-  resolveKeys();
   window.addEventListener('keydown', handleKeydown);
 });
 
 onUnmounted(() => {
-  controller.abort();
   window.removeEventListener('keydown', handleKeydown);
 });
 
@@ -460,6 +448,9 @@ const filteredTaxaList = computed(() => {
   return taxaList.value.filter(taxon => {
     // Realm chip filter
     if (activeRegion.value && !(taxon.distribution || []).includes(activeRegion.value)) {
+      return false;
+    }
+    if (activeSubfamily.value && taxon.subfamily !== activeSubfamily.value) {
       return false;
     }
 
@@ -492,6 +483,21 @@ const sortedTaxaList = computed(() => {
   });
 });
 
+// Summary shown in the intro (whole table, not the filtered view)
+const introSummary = computed(() => {
+  let species = 0
+  let italy = 0
+  taxaList.value.forEach((t) => {
+    species += toNum(t.numSpecies) || 0
+    italy += toNum(t.numSpeciesIta) || 0
+  })
+  return [
+    { label: taxaList.value.length === 1 ? t('genus') : t('genera'), value: taxaList.value.length },
+    { label: t('speciesItaly'), value: italy.toLocaleString('en-US') },
+    { label: t('speciesWorld'), value: species.toLocaleString('en-US') }
+  ]
+})
+
 // Column totals for the currently displayed rows
 const totals = computed(() => {
   let species = 0;
@@ -505,3 +511,47 @@ const totals = computed(() => {
   return { genera: sortedTaxaList.value.length, species, italy };
 });
 </script>
+
+<style scoped>
+.soi-input {
+  background: var(--soi-card);
+  border: 1.5px solid var(--soi-ink);
+  border-radius: 999px;
+  color: var(--soi-ink);
+  outline: none;
+}
+.soi-input:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--soi-yellow) 45%, transparent);
+}
+.soi-table-card {
+  background: var(--soi-card) !important;
+  border: 1px solid var(--soi-rule) !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+}
+:deep(.soi-thead) {
+  background: var(--soi-paper-2) !important;
+}
+:deep(.soi-row) {
+  border-left-width: 3px;
+}
+:deep(.soi-row:hover) {
+  background: color-mix(in srgb, var(--soi-yellow) 12%, transparent) !important;
+  border-left-color: var(--soi-yellow) !important;
+}
+.soi-acct {
+  margin-left: 0.4rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.05rem 0.4rem;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--soi-yellow) 30%, transparent);
+  color: var(--soi-yellow-deep);
+  vertical-align: 2px;
+}
+:deep(.soi-row-alt) {
+  background: color-mix(in srgb, var(--soi-paper-2) 55%, transparent);
+}
+</style>

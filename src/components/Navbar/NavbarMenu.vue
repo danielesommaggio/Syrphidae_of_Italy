@@ -11,12 +11,12 @@
             :to="item.link"
             class="hover:text-primary-content text-primary-content"
           >
-            {{ item.label }}
+            {{ menuLabel(item.label) }}
           </RouterLink>
           <NavbarSubmenu
             v-else-if="item.submenu"
             :menu="item.submenu"
-            :label="item.label"
+            :label="menuLabel(item.label)"
           />
         </div>
       </template>
@@ -26,6 +26,7 @@
 
 <script setup>
 import NavbarSubmenu from './NavbarSubmenu.vue'
+import { menuLabel } from '@/utils/soiLang.js'
 
 defineProps({
   menu: {
