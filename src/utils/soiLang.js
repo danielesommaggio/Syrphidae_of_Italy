@@ -55,6 +55,7 @@ const MENU_IT = {
   Genera: 'Generi',
   Keys: 'Chiavi',
   Atlas: 'Atlante',
+  Interactions: 'Interazioni',
   Bibliography: 'Bibliografia',
   Data: 'Dati',
   Latest: 'Novità',

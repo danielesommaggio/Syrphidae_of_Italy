@@ -67,6 +67,22 @@
                 v-html="content.trophism"
               />
             </div>
+            <div
+              v-if="interactions.length"
+              class="col-span-2"
+            >
+              <dt class="soi-k">{{ t('interactions') }}</dt>
+              <dd class="text-sm">
+                {{ interactions.join(' · ') }}
+                <button
+                  type="button"
+                  class="ml-1 underline underline-offset-2 soi-muted hover:opacity-80"
+                  @click="showNetwork"
+                >
+                  {{ t('seeNetwork') }}
+                </button>
+              </dd>
+            </div>
           </dl>
 
           <!-- Flight season -->
@@ -130,6 +146,8 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { makeAPIRequest } from '@/utils'
+import { useRouter } from 'vue-router'
+import { fetchAssociations } from '~/panels/_shared/associationGraph.js'
 import { lang, useT } from '@/utils/soiLang.js'
 import shapes, { VIEWBOX } from '~/pages/components/Atlas/italyRegions.js'
 import { REGION_ALIASES } from '~/pages/components/Atlas/useAtlas.js'
@@ -155,7 +173,19 @@ const t = useT({
     regions: 'Regions',
     nRegions: 'Recorded in {n} regions',
     noRegions: 'No regional records yet',
-    empty: 'No records or ecological data in SoI for this species yet.'
+    empty: 'No records or ecological data in SoI for this species yet.',
+    interactions: 'Interactions',
+    seeNetwork: 'see all associations →',
+    visits: 'visits {n} plants',
+    visits1: 'visits 1 plant',
+    feeds: 'feeds on {n} plants',
+    feeds1: 'feeds on 1 plant',
+    preys: 'preys on {n} taxa',
+    preys1: 'preys on 1 taxon',
+    parasitoids: '{n} parasitoids',
+    parasitoids1: '1 parasitoid',
+    predators: '{n} predators',
+    predators1: '1 predator'
   },
   it: {
     title: 'In sintesi',
@@ -171,7 +201,19 @@ const t = useT({
     regions: 'Regioni',
     nRegions: 'Presente in {n} regioni',
     noRegions: 'Nessun record regionale',
-    empty: 'Ancora nessun record o dato ecologico in SoI per questa specie.'
+    empty: 'Ancora nessun record o dato ecologico in SoI per questa specie.',
+    interactions: 'Interazioni',
+    seeNetwork: 'vedi tutte le associazioni →',
+    visits: 'visita {n} piante',
+    visits1: 'visita 1 pianta',
+    feeds: 'si nutre di {n} piante',
+    feeds1: 'si nutre di 1 pianta',
+    preys: 'preda {n} taxa',
+    preys1: 'preda 1 taxon',
+    parasitoids: '{n} parassitoidi',
+    parasitoids1: '1 parassitoide',
+    predators: '{n} predatori',
+    predators1: '1 predatore'
   }
 })
 
@@ -277,7 +319,42 @@ const elevation = computed(() => {
   return ''
 })
 
+// Biological associations in one line: "visits 24 plants · 2 parasitoids"
+const associations = ref([])
+const interactions = computed(() => {
+  const partners = new Map() // phrase key → Set of partner names
+  const add = (key, name) => {
+    if (!partners.has(key)) partners.set(key, new Set())
+    partners.get(key).add(name)
+  }
+  associations.value.forEach((a) => {
+    const rel = String(a.biological_relationship?.name || '').toLowerCase()
+    const subjectIsUs = a.subject?.taxonomy?.family === 'Syrphidae' || a.subject?.id === props.otuId
+    const partner = (subjectIsUs ? a.object : a.subject)?.object_label || ''
+    if (subjectIsUs) {
+      if (rel.includes('flower')) add('visits', partner)
+      else if (rel.includes('phytophag')) add('feeds', partner)
+      else if (rel.startsWith('predator')) add('preys', partner)
+    } else if (rel.startsWith('parasitoid')) add('parasitoids', partner)
+    else if (rel.startsWith('predator')) add('predators', partner)
+  })
+  return ['visits', 'feeds', 'preys', 'parasitoids', 'predators']
+    .filter((k) => partners.has(k))
+    .map((k) => {
+      const n = partners.get(k).size
+      return n === 1 ? t(`${k}1`) : t(k, { n })
+    })
+})
+const router = useRouter()
+// the table and network live in their own "Biological associations" tab
+function showNetwork() {
+  router.push({ name: 'otus-id-associations', params: { id: props.otuId } })
+}
+
 onMounted(async () => {
+  fetchAssociations({ 'otu_query[coordinatify]': true, 'otu_query[otu_id][]': props.otuId })
+    .then((rows) => (associations.value = rows))
+    .catch(() => {})
   const [dwc, cont] = await Promise.allSettled([
     makeAPIRequest.get(`/otus/${props.otuId}/inventory/dwc.json`, { signal: controller.signal }),
     makeAPIRequest.get('/contents', {

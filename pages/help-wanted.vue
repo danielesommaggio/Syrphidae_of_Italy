@@ -8,7 +8,7 @@
 
     <section class="container mx-auto box-border px-4 py-10 sm:py-14">
       <!-- Progress -->
-      <div class="grid sm:grid-cols-3 gap-5">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <button
           v-for="g in gaps"
           :key="g.key"
@@ -99,6 +99,7 @@
               <li><strong>{{ t('h1') }}</strong> {{ t('h1t') }}</li>
               <li><strong>{{ t('h2') }}</strong> {{ t('h2t') }}</li>
               <li><strong>{{ t('h3') }}</strong> {{ t('h3t') }}</li>
+              <li><strong>{{ t('h4') }}</strong> {{ t('h4t') }}</li>
             </ul>
             <a
               :href="`mailto:${email}?subject=${encodeURIComponent('SoI — ' + t('subject'))}`"
@@ -119,6 +120,7 @@ import { makeAPIRequest } from '@/utils/request'
 import { useT } from '@/utils/soiLang.js'
 import { useGenera } from './taxa/useGenera.js'
 import curators from './components/Section/Data/curators.js'
+import { fetchAssociations } from '~/panels/_shared/associationGraph.js'
 
 const t = useT({
   en: {
@@ -128,6 +130,7 @@ const t = useT({
     photo: 'No photograph',
     record: 'No Italian record',
     ecology: 'No ecological data',
+    interactions: 'No interactions',
     ofSpecies: 'of {n} species',
     complete: '{p}% of species covered',
     filter: 'Filter by name…',
@@ -141,6 +144,8 @@ const t = useT({
     h2t: 'dated, georeferenced specimens or reliable observations from Italy.',
     h3: 'Literature:',
     h3t: 'papers with biology, habitat or phenology we have not cited yet.',
+    h4: 'Interactions:',
+    h4t: 'flowers visited, larval food, prey or natural enemies, with the source.',
     write: 'Write to the curators',
     subject: 'contribution'
   },
@@ -151,6 +156,7 @@ const t = useT({
     photo: 'Senza fotografia',
     record: 'Senza record italiano',
     ecology: 'Senza dati ecologici',
+    interactions: 'Senza interazioni',
     ofSpecies: 'su {n} specie',
     complete: '{p}% delle specie coperto',
     filter: 'Filtra per nome…',
@@ -164,6 +170,8 @@ const t = useT({
     h2t: 'esemplari datati e georeferenziati o osservazioni affidabili dall’Italia.',
     h3: 'Letteratura:',
     h3t: 'articoli su biologia, habitat o fenologia non ancora citati.',
+    h4: 'Interazioni:',
+    h4t: 'fiori visitati, alimentazione larvale, prede o nemici naturali, con la fonte.',
     write: 'Scrivi ai curatori',
     subject: 'contributo'
   }
@@ -182,6 +190,7 @@ const withPhoto = ref(null) // Set of otu ids / names
 const photoNames = ref(new Set())
 const withRecord = ref(null) // Set of otu ids
 const withEcology = ref(null) // Set of otu ids
+const withInteractions = ref(null) // Set of otu ids with a biological association
 
 const active = ref('photo')
 const query = ref('')
@@ -200,7 +209,7 @@ const total = computed(() => species.value.length || '…')
 
 function missingFor(key) {
   if (!otuByTaxon.value || genera.loading) return null
-  const sets = { photo: withPhoto.value, record: withRecord.value, ecology: withEcology.value }
+  const sets = { photo: withPhoto.value, record: withRecord.value, ecology: withEcology.value, interactions: withInteractions.value }
   const set = sets[key]
   if (!set) return null
   return species.value.filter((s) => {
@@ -210,7 +219,7 @@ function missingFor(key) {
 }
 
 const gaps = computed(() =>
-  ['photo', 'record', 'ecology'].map((key) => {
+  ['photo', 'record', 'ecology', 'interactions'].map((key) => {
     const list = missingFor(key)
     const n = species.value.length
     return {
@@ -266,6 +275,15 @@ onMounted(async () => {
     .get('/contents', { params: { per: 5000 } })
     .then(({ data }) => (withEcology.value = new Set((data || []).map((c) => c.otu_id))))
     .catch(() => (withEcology.value = new Set()))
+
+  // Biological associations (hoverfly side of each association)
+  fetchAssociations()
+    .then((rows) => {
+      withInteractions.value = new Set(
+        rows.flatMap((a) => [a.subject, a.object]).filter((e) => e?.base_class === 'Otu').map((e) => e.id)
+      )
+    })
+    .catch(() => (withInteractions.value = new Set()))
 
   // Italian records (slowest query)
   makeAPIRequest

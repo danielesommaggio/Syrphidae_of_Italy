@@ -11,6 +11,9 @@
     - label: Atlas
       link: /atlas
 
+    - label: Interactions
+      link: /interactions
+
     - label: Keys
       link: /keys
 

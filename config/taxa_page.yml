@@ -17,8 +17,15 @@ taxa_page:
           - panel:etymology
           - panel:gbif
           - panel:statistics
-          
-      - - - panel:biological-associations-v2
+
+  # Biological associations get their own tab (table + network), species only
+  associations:
+    label: 'Biological associations'
+    rank_group: ['SpeciesGroup']
+    panels:
+      - - - panel:biological-associations-table
+        # - panel:biological-associations-v2   (previous table; switch back here if needed)
+          - panel:biological-associations-graph
   biology:
     panels:
       - - - id: panel:biology
