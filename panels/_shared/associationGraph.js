@@ -344,6 +344,8 @@ export async function fetchReferences(associationIds) {
         short: [s.cached_author_string, s.year].filter(Boolean).join(', ') || String(s.cached || '').replace(/<[^>]+>/g, '').slice(0, 40),
         html: String(s.cached || '').replace(/<(?!\/?i>)[^>]+>/g, ''), // keep only <i>
         url: s.doi ? `https://doi.org/${s.doi}` : String(s.cached || '').match(/https?:\/\/\S+[^\s.,;)]/)?.[0] || null,
+        authors: s.cached_author_string || '',
+        yearLabel: s.year || '',
         year: s.year || 9999
       }))
       .sort((a, b) => a.short.localeCompare(b.short) || a.year - b.year)

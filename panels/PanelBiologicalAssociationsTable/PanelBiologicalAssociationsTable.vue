@@ -136,7 +136,7 @@
             <div
               v-for="r in g.rows"
               :key="r.key"
-              :class="['bat-row', { on: isLit(r) }]"
+              :class="['bat-row', { on: isLit(r), dim: bus.pinnedSource && !r.citations.some((c) => c.id === bus.pinnedSource) }]"
               role="row"
               @mouseenter="bus.hover = { partner: r.partner.name, relationship: r.relationship, from: 'table' }"
               @mouseleave="bus.hover?.from === 'table' && (bus.hover = null)"
@@ -221,16 +221,12 @@
                   v-for="c in r.citations"
                   :key="c.id"
                   type="button"
-                  :class="['bat-ref', { on: bus.pinnedSource === c.id }]"
-                  :title="c.title"
+                  :class="['bat-cite', { on: bus.pinnedSource === c.id }]"
+                  :title="`${c.full}\n\n${t('citeTitle')}`"
                   @click="pin(c.id)"
                 >
-                  {{ c.n }}<span
-                    v-if="c.pages"
-                    class="bat-pages"
-                  >
-                    · p. {{ c.pages }}</span
-                  >
+                  <span class="bat-cite-author">{{ c.author }}</span>
+                  <span class="bat-cite-year">{{ c.year }}<template v-if="c.pages">: {{ c.pages }}</template></span>
                 </button>
                 <button
                   v-for="sp in r.specimens"
@@ -253,6 +249,53 @@
         >
           {{ t('noMatch') }}
         </p>
+
+        <!-- References: everything cited in the table, in full -->
+        <section
+          v-if="referenceList.length"
+          class="bat-refs"
+        >
+          <h3 class="bat-refs-title">
+            {{ t('references') }} <span class="opacity-60 tabular-nums">({{ referenceList.length }})</span>
+          </h3>
+          <ol>
+            <li
+              v-for="s in referenceList"
+              :key="s.id"
+              :class="{ on: bus.pinnedSource === s.id }"
+            >
+              <button
+                type="button"
+                class="bat-refs-text"
+                :aria-pressed="bus.pinnedSource === s.id"
+                :title="t('citeTitle')"
+                @click="pin(s.id)"
+                v-html="s.html"
+              />
+              <span class="bat-refs-meta">
+                <span>{{ t(s.count === 1 ? 'supports1' : 'supports', { n: s.count }) }}</span>
+                <a
+                  v-if="s.url"
+                  :href="s.url"
+                  target="_blank"
+                  rel="noopener"
+                  >{{ s.url.includes('doi.org') ? 'DOI' : t('link') }} ↗</a
+                >
+              </span>
+            </li>
+          </ol>
+          <p
+            v-if="bus.pinnedSource"
+            class="bat-refs-clear"
+          >
+            <button
+              type="button"
+              @click="bus.pinnedSource = null"
+            >
+              {{ t('showAll') }}
+            </button>
+          </p>
+        </section>
 
         <p class="mt-4 text-xs text-base-content/55">{{ t('help') }}</p>
       </template>
@@ -324,7 +367,13 @@ const t = useT({
     relationship: 'Relationship',
     object: 'Object',
     area: 'Recorded in',
-    evidence: 'Evidence',
+    evidence: 'Source',
+    references: 'References',
+    citeTitle: 'Click to show only the associations from this reference',
+    supports: '{n} associations in this table',
+    supports1: '1 association in this table',
+    link: 'Link',
+    showAll: 'Show all associations',
     specimen: 'Specimen',
     observation: 'Observation',
     details: 'Show the record',
@@ -334,7 +383,7 @@ const t = useT({
     broader: 'broader term',
     plants: 'Plants of the World Online',
     csvTitle: 'Download as a table (CSV)',
-    help: 'Each row reads subject — relationship → object, with life stages as labels. Each partner is shown with its picture (SoI, or iNaturalist when marked iNat); a photo under the arrow shows the association itself. The small map shows the Italian region(s) where the association was recorded. Numbers are references listed under the Association network; click one to highlight it there.'
+    help: 'Each row reads subject — relationship → object, with life stages as labels. Each partner is shown with its picture (SoI, or iNaturalist when marked iNat); a photo under the arrow shows the association itself. The small map shows the Italian region(s) where the association was recorded. Each source is given as author and year (with the page); click it, or a reference in the list below, to show only the associations it supports.'
   },
   it: {
     title: 'Associazioni biologiche',
@@ -349,6 +398,12 @@ const t = useT({
     object: 'Oggetto',
     area: 'Osservata in',
     evidence: 'Fonte',
+    references: 'Bibliografia',
+    citeTitle: 'Clicca per mostrare solo le associazioni di questo riferimento',
+    supports: '{n} associazioni in questa tabella',
+    supports1: '1 associazione in questa tabella',
+    link: 'Link',
+    showAll: 'Mostra tutte le associazioni',
     specimen: 'Esemplare',
     observation: 'Osservazione',
     details: 'Mostra il record',
@@ -358,7 +413,7 @@ const t = useT({
     broader: 'termine più ampio',
     plants: 'Plants of the World Online',
     csvTitle: 'Scarica come tabella (CSV)',
-    help: 'Ogni riga si legge soggetto — relazione → oggetto, con gli stadi come etichette. Ogni partner è mostrato con la sua immagine (SoI, o iNaturalist se indicato iNat); una foto sotto la freccia mostra l’associazione stessa. La piccola mappa indica la regione (o le regioni) italiane in cui l’associazione è stata osservata. I numeri sono riferimenti elencati sotto la Rete delle associazioni; clicca un numero per evidenziarlo.'
+    help: 'Ogni riga si legge soggetto — relazione → oggetto, con gli stadi come etichette. Ogni partner è mostrato con la sua immagine (SoI, o iNaturalist se indicato iNat); una foto sotto la freccia mostra l’associazione stessa. La piccola mappa indica la regione (o le regioni) italiane in cui l’associazione è stata osservata. Ogni fonte è indicata con autore e anno (e pagina); cliccala, o clicca un riferimento nell’elenco sotto, per mostrare solo le associazioni che documenta.'
   }
 })
 
@@ -515,9 +570,17 @@ const statements = computed(() => {
     const citations = [...cites.entries()]
       .map(([id, pages]) => {
         const s = sources.get(id)
-        return { id, pages, n: bus.sourceNumbers.get(id) ?? s?.n ?? '?', title: s ? `${s.short}${pages ? `: ${pages}` : ''}` : '' }
+        return {
+          id,
+          pages,
+          n: bus.sourceNumbers.get(id) ?? s?.n ?? '?',
+          author: shortAuthors(s?.authors) || s?.short || '?',
+          year: s?.yearLabel || '',
+          full: s ? s.html.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&') : '',
+          title: s ? `${s.short}${pages ? `: ${pages}` : ''}` : ''
+        }
       })
-      .sort((a, b) => Number(a.n) - Number(b.n))
+      .sort((a, b) => String(a.year).localeCompare(String(b.year)) || a.author.localeCompare(b.author))
     const areas = []
     r.ids.forEach((id) => (extras.areas.get(id) || []).forEach((x) => !areas.some((y) => y.name === x.name) && areas.push(x)))
     return {
@@ -595,9 +658,28 @@ const isLit = (r) => {
   return sameName(hv.partner, r.partner.name) && (!hv.relationship || hv.relationship === r.relationship)
 }
 
+// "Almohamad, Verheggen & Haubruge" → "Almohamad et al."; two authors stay as they are
+function shortAuthors(authors) {
+  const a = String(authors || '').trim()
+  if (!a) return ''
+  const names = a.split(/\s*(?:,|&| and )\s*/).filter(Boolean)
+  return names.length > 2 ? `${names[0]} et al.` : a
+}
+
+// every reference cited in the table, with how many statements it supports
+const referenceList = computed(() => {
+  const sources = new Map((extras.refs?.sources || []).map((s) => [s.id, s]))
+  const counts = new Map()
+  statements.value.forEach((r) => r.citations.forEach((c) => counts.set(c.id, (counts.get(c.id) || 0) + 1)))
+  return [...counts.entries()]
+    .map(([id, count]) => ({ ...(sources.get(id) || { id, html: '?', short: '?' }), count }))
+    .filter((s) => s.html)
+    .sort((a, b) => a.short.localeCompare(b.short))
+})
+
+// select a reference: rows from other sources fade, the network highlights it too
 function pin(id) {
   bus.pinnedSource = bus.pinnedSource === id ? null : id
-  if (bus.pinnedSource) document.getElementById('soi-association-network')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
 function openViewer(images) {
@@ -966,11 +1048,11 @@ html.dark .soi-bat {
 
 /* Table as a CSS grid; rows become cards on narrow screens */
 .bat-table {
-  --cols: minmax(13rem, 1.4fr) minmax(6.5rem, 0.6fr) minmax(14rem, 1.5fr) minmax(7rem, 0.9fr);
+  --cols: minmax(13rem, 1.4fr) minmax(6.5rem, 0.6fr) minmax(14rem, 1.5fr) minmax(10rem, 1fr);
   font-size: 0.875rem;
 }
 .bat-table.has-area {
-  --cols: minmax(13rem, 1.4fr) minmax(6.5rem, 0.6fr) minmax(14rem, 1.5fr) minmax(9rem, 0.9fr) minmax(7rem, 0.8fr);
+  --cols: minmax(13rem, 1.4fr) minmax(6.5rem, 0.6fr) minmax(14rem, 1.5fr) minmax(9rem, 0.9fr) minmax(10rem, 1fr);
 }
 .bat-head,
 .bat-row {
@@ -1059,8 +1141,102 @@ html.dark .soi-bat {
 }
 .bat-evidence {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 0.3rem;
+}
+.bat-cite {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.3rem;
+  text-align: left;
+  padding: 0.1rem 0.5rem;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: rgb(var(--color-base-content));
+  background: rgba(var(--color-base-content), 0.06);
+  box-shadow: inset 0 0 0 1px rgba(var(--color-base-border), 0.9);
+}
+.bat-cite-author {
+  font-weight: 600;
+}
+.bat-cite-year {
+  font-variant-numeric: tabular-nums;
+  color: rgba(var(--color-base-content), 0.7);
+}
+.bat-cite:hover,
+.bat-cite.on {
+  background: rgb(var(--color-base-content));
+  color: rgb(var(--color-base-foreground));
+}
+.bat-cite:hover .bat-cite-year,
+.bat-cite.on .bat-cite-year {
+  color: inherit;
+}
+.bat-row.dim {
+  opacity: 0.3;
+}
+.bat-refs {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(var(--color-base-border), 0.8);
+}
+.bat-refs-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.bat-refs ol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.bat-refs li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.75rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+.bat-refs li.on {
+  background: rgba(var(--color-base-content), 0.07);
+  box-shadow: inset 3px 0 0 rgb(var(--color-base-content));
+}
+.bat-refs-text {
+  flex: 1 1 28rem;
+  text-align: left;
+  color: rgb(var(--color-base-content));
+}
+.bat-refs-text:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.bat-refs-meta {
+  display: inline-flex;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  color: rgba(var(--color-base-content), 0.6);
+  white-space: nowrap;
+}
+.bat-refs-meta a {
+  font-weight: 600;
+  color: rgb(var(--color-base-content));
+}
+.bat-refs-meta a:hover {
+  text-decoration: underline;
+}
+.bat-refs-clear {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+.bat-refs-clear button {
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 .bat-ref {
   min-width: 1.4rem;
