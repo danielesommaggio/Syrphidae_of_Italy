@@ -2,7 +2,7 @@
 
 Each biological association as a statement, the way an ontology reads it:
 
-    [image]  Episyrphus balteatus [larva] — predator of → Aphis fabae · Aphididae   [1 · p. 473]
+    [image]  Episyrphus balteatus [larva] — predator of → Aphis fabae · Aphididae   [Rotheray 1993: 473]
 
 Replaces `panel:biological-associations-v2` in `config/taxa_page.yml` (the old
 panel is kept, commented, and can be switched back there). Shown above the
@@ -14,10 +14,11 @@ Association network, and linked to it.
   qualify. Hover: the definition from TaxonWorks; click: the Uberon term.
 - **Relationship sections**, in the network's colours, with the definition from
   TaxonWorks and a link to the Relation Ontology term (`../_shared/ontology.js`).
-- **An image on every row:** the association's own photo (marked ●), otherwise a
-  photo of the partner taxon — SoI first, then iNaturalist (marked SoI / iNat).
-- **Evidence:** numbered references, the same numbers as under the network
-  (click to highlight there), plus Specimen ⓘ / Observation ⓘ record buttons.
+- **Images of the partner taxon** (none for the page's own species): the association's
+  own photo (marked ●), otherwise SoI first, then iNaturalist (marked SoI / iNat).
+- **Evidence:** author–year chips (e.g. "Rotheray 1993", "Speight et al. 2020") linking
+  to the full reference list below the table; clicking a chip highlights the rows
+  supported by that work. Plus Specimen ⓘ / Observation ⓘ record buttons.
 - **Area** column only when some association has one.
 - **Filters:** relationship and life-stage chips, a name filter (more than 8
   rows), CSV (with the RO term of each relationship).

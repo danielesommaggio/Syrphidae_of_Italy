@@ -18,10 +18,10 @@
       link: /keys
 
     - label: Bibliography
-      link: /resources/tw/filter/bibliography
+      link: /bibliography
 
     - label: Data
-      link: /resources/tw/filter/dwc_otus
+      link: /data
 
     - label: Latest
       submenu:
