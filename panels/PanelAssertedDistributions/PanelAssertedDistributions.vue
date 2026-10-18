@@ -19,7 +19,7 @@
     <!-- ========================= -->
     <!-- BOTTOM PANEL: ASSERTED DISTRIBUTIONS -->
     <!-- ========================= -->
-    <VCard>
+    <VCard v-if="!mapOnly">
       <ClientOnly>
         <VSpinner v-if="isLoading" />
       </ClientOnly>
@@ -276,6 +276,12 @@ const props = defineProps({
   per: {
     type: Number,
     default: 500
+  },
+
+  // Show only the map (SoI: the table is replaced by panel:distribution)
+  mapOnly: {
+    type: Boolean,
+    default: false
   }
 })
 

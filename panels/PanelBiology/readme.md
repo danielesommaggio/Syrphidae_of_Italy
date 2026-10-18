@@ -23,7 +23,10 @@ is which:
     SoI records per month as green bars. Hover (or tab to) a month for both
     ("July · in the literature season · 26 records").
   - *Altitude* — literature range as a yellow bar, each SoI record elevation as a tick;
-    hover (or tab to) a tick for its elevation and number of records ("1,600 m · 14 records").
+    hover (or tab to) a tick for its elevation and number of records ("1,600 m · 14 records");
+    click it (or press Enter) to list those records under the chart (`../_shared/RecordList.vue`):
+    date, locality, elevation, sex, collector, collection and catalog number. Click a record
+    (ⓘ) for the full record inside SoI (`DwcTable`); GBIF ↗ opens the same record on GBIF.
   - Under both charts, **one sentence compares the literature with the SoI records** when
     both exist: either "All SoI records fall within…", or how many records fall outside and
     where ("2 records in SoI lie above the literature range (up to 2,500 m; the literature

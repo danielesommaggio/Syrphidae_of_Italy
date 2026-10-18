@@ -430,6 +430,15 @@
                       <span class="block text-xs soi-muted">
                         {{ [r.sex && valueLabel('sex', r.sex), r.inst, r.cat].filter(Boolean).join(' · ') }}
                         <button
+                          v-if="isSpecimen(r)"
+                          type="button"
+                          class="dt-rec-link"
+                          :title="t('details')"
+                          @click="openDetails(r)"
+                        >
+                          {{ t('recordLink') }} ⓘ
+                        </button>
+                        <button
                           v-if="r.raw.occurrenceID"
                           type="button"
                           class="dt-gbif-link"
@@ -496,6 +505,7 @@
         </div>
       </div>
     </section>
+    <DwcTable ref="dwcTableRef" />
   </div>
 </template>
 
@@ -506,6 +516,7 @@ import { useHead } from '@unhead/vue'
 import AtlasMap from './components/Atlas/AtlasMap.vue'
 import SeasonBars from './components/Atlas/SeasonBars.vue'
 import SoiPointMap from './components/Data/SoiPointMap.vue'
+import DwcTable from '~/panels/_shared/DwcTable.vue'
 import GbifLogoIcon from './components/GbifCitation/components/GbifLogoIcon.vue'
 import { LINKS, datasetCitation, fmtDate, openRecordOnGbif, useGbif } from './components/Gbif/useGbif.js'
 import { downloadCsv, fetchOccurrences } from './components/Data/useOccurrences.js'
@@ -585,6 +596,8 @@ const t = useT({
     gbifOpen: 'Open on GBIF',
     gbifDataset: 'Dataset page',
     onGbif: 'View on GBIF',
+    details: 'Full record',
+    recordLink: 'Record',
     onGbifTitle: 'Open this record on GBIF',
     citeEyebrow: 'How to cite these data',
     citeText: 'If you use these records, please cite the SoI occurrence dataset (as GBIF does), with the date of your download:',
@@ -666,6 +679,8 @@ const t = useT({
     gbifOpen: 'Apri su GBIF',
     gbifDataset: 'Pagina del dataset',
     onGbif: 'Vedi su GBIF',
+    details: 'Record completo',
+    recordLink: 'Record',
     onGbifTitle: 'Apri questo record su GBIF',
     citeEyebrow: 'Come citare questi dati',
     citeText: 'Se usi questi record, cita il dataset di occorrenze di SoI (come fa GBIF), con la data del download:',
@@ -864,7 +879,12 @@ const points = computed(() =>
           esc([r.locality, r.where].filter(Boolean).join(', ')),
           esc([r.date, r.collector].filter(Boolean).join(' · ')),
           esc([r.inst, r.cat].filter(Boolean).join(' ')),
-          r.raw.occurrenceID ? `<a href="#" data-gbif-occ="${esc(r.raw.occurrenceID)}">${esc(t('onGbif'))} ↗</a>` : ''
+          [
+            isSpecimen(r) ? `<a href="#" data-soi-rec="${esc(r.raw.dwc_occurrence_object_type)}:${esc(r.raw.dwc_occurrence_object_id)}">${esc(t('details'))} ⓘ</a>` : '',
+            r.raw.occurrenceID ? `<a href="#" data-gbif-occ="${esc(r.raw.occurrenceID)}">${esc(t('onGbif'))} ↗</a>` : ''
+          ]
+            .filter(Boolean)
+            .join(' · ')
         ]
           .filter(Boolean)
           .join('<br>')
@@ -933,10 +953,24 @@ const citation = computed(() => datasetCitation('syrphidaeitaly.com'))
 
 // "View on GBIF" links inside map popups
 function onPopupClick(e) {
+  const rec = e.target.closest?.('[data-soi-rec]')
+  if (rec) {
+    e.preventDefault()
+    const [type, id] = rec.getAttribute('data-soi-rec').split(':')
+    dwcTableRef.value?.show({ id: Number(id), type })
+    return
+  }
   const a = e.target.closest?.('[data-gbif-occ]')
   if (!a) return
   e.preventDefault()
   openRecordOnGbif(a.getAttribute('data-gbif-occ'))
+}
+
+// The full record, inside SoI (specimens and field observations)
+const dwcTableRef = ref(null)
+const isSpecimen = (r) => ['CollectionObject', 'FieldOccurrence'].includes(r.raw.dwc_occurrence_object_type) && r.raw.dwc_occurrence_object_id
+function openDetails(r) {
+  dwcTableRef.value?.show({ id: r.raw.dwc_occurrence_object_id, type: r.raw.dwc_occurrence_object_type })
 }
 onMounted(() => document.addEventListener('click', onPopupClick))
 onBeforeUnmount(() => document.removeEventListener('click', onPopupClick))
@@ -1156,6 +1190,13 @@ a.dt-name:hover {
   background: #4c9b45;
   color: #fff;
   font-size: 1.15rem;
+}
+.dt-rec-link {
+  margin-left: 0.35rem;
+  font-weight: 700;
+  color: var(--soi-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 .dt-gbif-link {
   margin-left: 0.35rem;

@@ -1,5 +1,9 @@
 # PanelAssertedDistributions
 
+> **In SoI** this panel is shown with `mapOnly: true` (prop added for SoI): only its map
+> appears, under `panel:distribution`, which replaces the table. See
+> `../PanelDistribution/readme.md` and `config/taxa_page.yml`.
+
 Table panel (`panel:asserted-distributions`) displaying all asserted distributions for an OTU and its descendants, grouped by country/parent area, with geographic area map popups and structured citations.
 
 ## Setup

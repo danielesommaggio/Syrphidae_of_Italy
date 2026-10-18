@@ -161,21 +161,26 @@
                   v-for="e in recordElevations"
                   :key="e"
                   class="bio-tick"
-                  :class="{ on: hoverElev === e }"
+                  :class="{ on: hoverElev === e || pickedElev === e }"
                   :style="{ left: (e / altMax) * 100 + '%' }"
                   tabindex="0"
-                  :aria-label="elevLabel(e)"
+                  role="button"
+                  :aria-pressed="pickedElev === e"
+                  :aria-label="`${elevLabel(e)} — ${t('clickList')}`"
                   @mouseenter="hoverElev = e"
                   @mouseleave="hoverElev = null"
                   @focus="hoverElev = e"
                   @blur="hoverElev = null"
+                  @click="pickElev(e)"
+                  @keydown.enter.prevent="pickElev(e)"
+                  @keydown.space.prevent="pickElev(e)"
                 >
                   <span
                     v-if="hoverElev === e"
                     class="bio-tip"
                     :class="{ end: e / altMax > 0.8, start: e / altMax < 0.2 }"
                     role="tooltip"
-                    >{{ elevLabel(e) }}</span
+                    >{{ elevLabel(e) }} · {{ t('clickList') }}</span
                   >
                 </span>
               </div>
@@ -192,6 +197,31 @@
               >
                 {{ altNote }}
               </p>
+
+              <!-- the records at the chosen elevation -->
+              <div
+                v-if="pickedElev !== null"
+                class="bio-recs"
+                role="region"
+                :aria-label="t('recsAt', { e: fmt(pickedElev) })"
+              >
+                <div class="flex items-baseline justify-between gap-3">
+                  <p class="font-semibold">{{ t('recsAt', { e: fmt(pickedElev) }) }}</p>
+                  <button
+                    type="button"
+                    class="bio-close"
+                    :aria-label="t('close')"
+                    @click="pickedElev = null"
+                  >
+                    ×
+                  </button>
+                </div>
+                <RecordList
+                  :key="pickedElev"
+                  :records="recordsAt(pickedElev)"
+                  class="mt-1"
+                />
+              </div>
             </section>
 
             <!-- Habitat -->
@@ -317,6 +347,7 @@ import { lang, useT } from '@/utils/soiLang.js'
 import RedListBadge from '~/pages/components/Atlas/RedListBadge.vue'
 import { fetchAssociations } from '../_shared/associationGraph.js'
 import { TOPIC, traitsOf } from './traits.js'
+import RecordList from '../_shared/RecordList.vue'
 import FlowersVisited from './components/FlowersVisited.vue'
 import HabitatProfile from './components/HabitatProfile.vue'
 import LarvalHabitat from './components/LarvalHabitat.vue'
@@ -346,6 +377,11 @@ const t = useT({
     feeding: 'Larval food',
     microhabitat: 'Where larvae live',
     fromLit: 'literature',
+    clickList: 'click to list them',
+    recsAt: 'SoI records at {e} m',
+    close: 'Close',
+    noDate: 'no date',
+    onGbif: 'Open this record on GBIF',
     litSeason: 'Flight season given in the literature',
     litAltitude: 'Range given in the literature ({r})',
     fromRecords: 'SoI records per month ({n})',
@@ -406,6 +442,11 @@ const t = useT({
     feeding: 'Alimentazione larvale',
     microhabitat: 'Dove vivono le larve',
     fromLit: 'letteratura',
+    clickList: 'clicca per vederli',
+    recsAt: 'Record di SoI a {e} m',
+    close: 'Chiudi',
+    noDate: 'senza data',
+    onGbif: 'Apri questo record su GBIF',
     litSeason: 'Periodo di volo indicato in letteratura',
     litAltitude: 'Intervallo indicato in letteratura ({r})',
     fromRecords: 'record di SoI per mese ({n})',
@@ -506,6 +547,26 @@ const elevCounts = computed(() => {
 })
 const recordElevations = computed(() => [...elevCounts.value.keys()].sort((a, b) => a - b))
 const hoverElev = ref(null)
+const pickedElev = ref(null)
+function pickElev(e) {
+  pickedElev.value = pickedElev.value === e ? null : e
+}
+// records at one elevation (same rule as elevCounts), dated ones first, newest first
+const elevOf = (r) => {
+  const v = [r.minimumElevationInMeters, r.maximumElevationInMeters].map(Number).find((x) => Number.isFinite(x) && x > 0)
+  return v ? Math.round(v) : null
+}
+function recordsAt(e) {
+  return records.value
+    .filter((r) => elevOf(r) === e)
+    .sort((a, b) => String(b.eventDate || '').localeCompare(String(a.eventDate || '')))
+}
+function elevText(r) {
+  const lo = Number(r.minimumElevationInMeters)
+  const hi = Number(r.maximumElevationInMeters)
+  if (Number.isFinite(lo) && lo > 0 && Number.isFinite(hi) && hi > lo) return `${fmt(lo)}–${fmt(hi)} m`
+  return r.verbatimElevation || ''
+}
 function elevLabel(e) {
   const n = elevCounts.value.get(e) || 0
   return `${fmt(e)} m · ${n === 1 ? t('rec1') : t('recs', { n: fmt(n) })}`
@@ -848,6 +909,44 @@ onBeforeUnmount(() => controller.abort())
 .bio-month.on,
 .bio-month:focus-visible {
   box-shadow: inset 0 0 0 2px var(--bio-ink);
+}
+.bio-recs {
+  margin-top: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  border-left: 3px solid var(--bio-bar);
+  background: var(--soi-paper-2, #f2ecdd);
+  border-radius: 0 6px 6px 0;
+  font-size: 0.82rem;
+}
+.bio-recs ul {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+.bio-recs li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.6rem;
+  align-items: baseline;
+}
+.bio-rec-date {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.bio-close {
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--bio-muted);
+}
+.bio-gbif {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: var(--bio-ink);
+}
+.bio-tick {
+  cursor: pointer;
 }
 .bio-note {
   margin-top: 0.4rem;

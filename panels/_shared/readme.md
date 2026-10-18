@@ -116,3 +116,18 @@ If `depictions` has an Otu / CO / FO entry the block shows the parsed taxon name
 | keys module | `../../modules/keys/components/LeadFigures.vue` | lead figures / "+N more images" — taxon-image fallback carries full `depictions` / `attribution` / `source` / `citations`; a key's own figure uses `captionHtml` |
 
 If you change this file, check all six call sites — the contract is `images` + `index` + the four events; keep it stable.
+
+## RecordList.vue
+
+A short list of SoI occurrence records (DwC rows, e.g. from `/otus/:id/inventory/dwc.json`),
+newest first, 25 at a time. Prop: `records`.
+
+- **Specimens and field observations** — date and locality are a button that opens the
+  full record inside SoI (`./DwcTable.vue`, ⓘ).
+- **Literature records** (`AssertedDistribution`) — "Literature" and the reference, linked to
+  the Bibliography page searched for its author and year.
+- Elevation, sex, collector, collection and catalog number in grey; **GBIF ↗** opens the same
+  record on GBIF (`openRecordOnGbif`).
+
+**Depended on by:** `../PanelBiology` (records at an altitude tick), `../PanelDistribution`
+(records of a region). The Data page (`pages/data.vue`) opens `DwcTable` directly.

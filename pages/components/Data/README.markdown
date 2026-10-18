@@ -36,8 +36,10 @@ records (`AssertedDistribution`, basis of record `MaterialCitation`).
 - **GBIF banner** at the top: these records are the SoI occurrence dataset on GBIF
   (doi:10.15468/faryxm), with the date GBIF last updated it and links to the records
   and the dataset page on GBIF.
-- **GBIF ↗ on every record** (records view and map popups): opens that record on
-  gbif.org, found by its `occurrenceID` (`openRecordOnGbif` in `../Gbif/useGbif.js`).
+- **Record ⓘ on every specimen** (records view and map popups): the full record inside
+  SoI (`panels/_shared/DwcTable.vue`, the same window as on species pages).
+- **GBIF ↗ on every record**: opens that record on gbif.org, found by its `occurrenceID`
+  (`openRecordOnGbif` in `../Gbif/useGbif.js`).
 - **How to cite**: the dataset citation from GBIF (title not repeated), with
   "accessed via syrphidaeitaly.com on <today>"; a fixed text is used if GBIF can't be
   reached.

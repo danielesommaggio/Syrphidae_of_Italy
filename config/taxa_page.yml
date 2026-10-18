@@ -43,10 +43,15 @@ taxa_page:
       - - - panel:specimen-occurrences
   
   asserted_distributions:
-    label: 'Asserted Distributions'
+    label: 'Distribution'
     rank_group: ['SpeciesGroup']
     panels:
-      - - - id: panel:asserted-distributions
+      # Italy (regions, records + literature), outside Italy, GBIF context
+      - - - panel:distribution
+          # the map of the stock panel; its table is replaced by panel:distribution
+          - id: panel:asserted-distributions
+            bind:
+              mapOnly: true
   field_occurrences:
     rank_group: ['SpeciesGroup']
     panels:
