@@ -13,7 +13,7 @@ the visitor's browser.
 
 | File | Used by |
 |---|---|
-| `useGbif.js` | home, about, data page, footer, `panels/PanelGBIF` |
+| `useGbif.js` | home, about, data page, footer, `panels/PanelGBIF`, `panels/PanelDistribution` (GBIF line), `panels/_shared/RecordList.vue` (GBIF ↗) |
 | `GbifOpenData.vue` | home ("Cite and reuse"), about ("Open data") |
 
 ## useGbif.js

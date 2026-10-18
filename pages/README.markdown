@@ -32,7 +32,7 @@ and a README full of code breaks the build. That is why the READMEs here are nam
 
 Routes provided by modules rather than pages: `/keys` and `/key/:id` (`modules/keys`),
 `/interactive-key/:id` (`modules/interactiveKeys`), `/news` (TaxonPages news module),
-species pages `/otus/:id/...` (panels in `panels/`, layout in `config/taxa_page.yml`).
+species pages `/otus/:id/...` (panels in `panels/` — see `panels/README.md` — layout in `config/taxa_page.yml`).
 
 The stock TaxonPages filters are still reachable but no longer in the menu:
 `/resources/tw/filter/bibliography` (linked as "Advanced search" from `/bibliography`)
