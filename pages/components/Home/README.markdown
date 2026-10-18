@@ -11,7 +11,7 @@ hide a section, edit `home.vue`.
 | 4 | `HomeAtlasTeaser.vue` | Small Atlas map, records per month, peak month, link to `/atlas` | `../Atlas/useAtlas.js` |
 | 5 | `HomeAbout.vue` | Why the catalogue (pollinators, pest control, bioindicators), links to About and Atlas | static text |
 | 6 | `HomeExplore.vue` | "Find your way in": cards to genera, atlas, keys, family page, bibliography, data, latest, help wanted | static + family OTU id |
-| 7 | `HomeNewsCite.vue` | Last 3 news, how to cite (copy button), GBIF dataset DOI, GBIF literature widget | `/news?per=3`; citation from `config` (`project_citation`, `project_authors`, `project_url`); `../GbifCitation` |
+| 7 | `HomeNewsCite.vue` | Last 3 news; "Cite and reuse": the GBIF open-data card (`../Gbif/GbifOpenData.vue`), two citations with copy buttons (the website, from `config/project.yml`; the GBIF occurrence dataset, from GBIF), and the GBIF literature widget | `/news?per=3`; `../Gbif/useGbif.js`; `../GbifCitation` |
 | 8 | `HomePartners.vue` | Partner logos (TaxonWorks, SFG, GBIF, Dolomiti Bellunesi National Park…) | list in the file; logos in `public/images/` |
 
 Not used at the moment (kept for later): `HomeGallery.vue` (grid of diagnostic

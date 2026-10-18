@@ -33,11 +33,14 @@ records (`AssertedDistribution`, basis of record `MaterialCitation`).
   names (`DWC_COLUMNS`), `SoI_records_<date>.csv`, UTF-8 with BOM (opens in Excel).
 - **Copy link to this search** — all filters and the view are kept in the address
   (`?species=…&region=Veneto&view=map`).
-- **How to cite**: the dataset citation read from GBIF
-  (`api.gbif.org/v1/dataset/doi/10.15468/faryxm`), with "accessed via
-  syrphidaeitaly.com on <today>"; a fixed text is used if GBIF can't be reached.
-  Note: on GBIF this DOI is currently a *metadata* dataset — the occurrences are not
-  published there yet.
+- **GBIF banner** at the top: these records are the SoI occurrence dataset on GBIF
+  (doi:10.15468/faryxm), with the date GBIF last updated it and links to the records
+  and the dataset page on GBIF.
+- **GBIF ↗ on every record** (records view and map popups): opens that record on
+  gbif.org, found by its `occurrenceID` (`openRecordOnGbif` in `../Gbif/useGbif.js`).
+- **How to cite**: the dataset citation from GBIF (title not repeated), with
+  "accessed via syrphidaeitaly.com on <today>"; a fixed text is used if GBIF can't be
+  reached.
 
 ## Regions
 
@@ -72,4 +75,5 @@ Esri light-grey tiles; scroll-wheel zoom is off so the page scrolls normally.
 
 ## Reused components
 
-`../Atlas/AtlasMap.vue` (region map) and `../Atlas/SeasonBars.vue` (months).
+`../Atlas/AtlasMap.vue` (region map), `../Atlas/SeasonBars.vue` (months),
+`../Gbif/useGbif.js` (GBIF numbers, links, citation).

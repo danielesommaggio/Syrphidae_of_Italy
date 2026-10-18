@@ -59,33 +59,32 @@
       <div class="lg:col-span-7">
         <h2 class="soi-serif text-2xl sm:text-3xl font-semibold">{{ t('cite') }}</h2>
 
+        <p class="mt-3 soi-muted leading-relaxed">{{ t('reuse') }}</p>
+
+        <ClientOnly>
+          <GbifOpenData class="mt-6" />
+        </ClientOnly>
+
         <div class="soi-cite mt-6 p-6 sm:p-7">
           <p class="soi-eyebrow">{{ t('howCite') }}</p>
-          <p class="mt-3 text-[1.02rem] leading-relaxed">
-            {{ citation }}
-            {{ t('retrieved') }} {{ today }} {{ t('from') }}
-            <a
-              :href="siteUrl"
-              class="soi-link"
-              >{{ siteHost }}</a
+          <dl class="mt-4 space-y-5">
+            <div
+              v-for="c in cites"
+              :key="c.key"
             >
-          </p>
-          <div class="mt-5 flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              class="soi-btn soi-btn-ink"
-              @click="copy"
-            >
-              {{ copied ? t('copied') : t('copy') }}
-            </button>
-            <a
-              href="https://doi.org/10.15468/faryxm"
-              target="_blank"
-              rel="noopener"
-              class="soi-btn soi-btn-line"
-              >{{ t('dataset') }} · doi:10.15468/faryxm</a
-            >
-          </div>
+              <dt class="text-sm font-semibold">{{ c.label }}</dt>
+              <dd class="mt-1 text-[1.02rem] leading-relaxed soi-cite-text">{{ c.text }}</dd>
+              <dd class="mt-2">
+                <button
+                  type="button"
+                  class="soi-btn soi-btn-line !py-1 !px-3 text-sm"
+                  @click="copy(c)"
+                >
+                  {{ copied === c.key ? t('copied') : t('copy') }}
+                </button>
+              </dd>
+            </div>
+          </dl>
         </div>
 
         <div class="mt-8">
@@ -108,27 +107,30 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { makeAPIRequest } from '@/utils/request'
 import { useT } from '@/utils/soiLang.js'
 
 const t = useT({
-  en: { news: 'News', allNews: 'All news', cite: 'Cite and reuse', howCite: 'How to cite', dataset: 'Dataset on GBIF', research: 'Published research using SoI data', via: 'via GBIF literature tracking', none: 'No news yet.', copy: 'Copy citation', copied: 'Copied', retrieved: 'Retrieved', from: 'from' },
-  it: { news: 'Notizie', allNews: 'Tutte le notizie', cite: 'Citare e riutilizzare', howCite: 'Come citare', dataset: 'Dataset su GBIF', research: 'Ricerche pubblicate con i dati di SoI', via: 'tramite il monitoraggio della letteratura GBIF', none: 'Ancora nessuna notizia.', copy: 'Copia la citazione', copied: 'Copiata', retrieved: 'Consultato il', from: 'su' }
+  en: { news: 'News', allNews: 'All news', cite: 'Cite and reuse', reuse: 'SoI data are open: browse them here, or download them from GBIF, where they are published as a citable dataset.', howCite: 'How to cite', citeSite: 'The website', citeData: 'The occurrence data (if you use records, downloaded here or from GBIF)', research: 'Published research using SoI data', via: 'via GBIF literature tracking', none: 'No news yet.', copy: 'Copy citation', copied: 'Copied ✓', retrieved: 'Retrieved', from: 'from' },
+  it: { news: 'Notizie', allNews: 'Tutte le notizie', cite: 'Citare e riutilizzare', reuse: 'I dati di SoI sono aperti: consultali qui o scaricali da GBIF, dove sono pubblicati come dataset citabile.', howCite: 'Come citare', citeSite: 'Il sito', citeData: 'I dati di occorrenza (se usi i record, scaricati qui o da GBIF)', research: 'Ricerche pubblicate con i dati di SoI', via: 'tramite il monitoraggio della letteratura GBIF', none: 'Ancora nessuna notizia.', copy: 'Copia la citazione', copied: 'Copiata ✓', retrieved: 'Retrieved', from: 'from' }
 })
 import VGbifCitationWidget from '../GbifCitation/components/VGbifCitationWidget.vue'
+import GbifOpenData from '../Gbif/GbifOpenData.vue'
+import { GBIF, datasetCitation, useGbif } from '../Gbif/useGbif.js'
 
 const { project_citation, project_authors, project_url } = __APP_ENV__
 
 const news = ref([])
 const loading = ref(true)
-const copied = ref(false)
+const copied = ref('')
+const gbif = useGbif()
 
 const siteHost = (project_url || 'syrphidaeitaly.com').replace(/^https?:\/\//, '').replace(/\/$/, '')
 const siteUrl = `https://${siteHost}`
 const today = new Date().toISOString().slice(0, 10)
 const year = (project_authors || '').match(/\d{4}/)?.[0]
-const authors = (project_authors || 'Sommaggio et al.').replace(/\s*\(\d{4}\)\s*/, '')
+const authors = (project_authors || 'Sommaggio D, Dal Pos D').replace(/\s*\(\d{4}\)\.?\s*/, '').replace(/\.$/, '')
 const citation = `${authors}${year ? ` (${year})` : ''}. ${project_citation || 'Syrphidae of Italy (SoI)'}.`
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -158,11 +160,16 @@ onMounted(async () => {
   }
 })
 
-function copy() {
-  const text = `${citation} Retrieved ${today} from ${siteUrl}`
-  navigator.clipboard?.writeText(text).then(() => {
-    copied.value = true
-    setTimeout(() => (copied.value = false), 1800)
+// The website, and the GBIF occurrence dataset (citation from GBIF, title not repeated)
+const cites = computed(() => [
+  { key: 'site', label: t('citeSite'), text: `${citation} Retrieved ${today} from ${siteUrl}` },
+  { key: 'data', label: t('citeData'), text: gbif.citation ? datasetCitation('GBIF.org') : `https://doi.org/${GBIF.doi}` }
+])
+
+function copy(c) {
+  navigator.clipboard?.writeText(c.text).then(() => {
+    copied.value = c.key
+    setTimeout(() => (copied.value = ''), 1800)
   })
 }
 </script>
@@ -181,6 +188,9 @@ function copy() {
   border: 1px solid var(--soi-rule);
   border-left: 5px solid var(--soi-yellow);
   border-radius: 4px;
+}
+.soi-cite-text {
+  overflow-wrap: anywhere;
 }
 .soi-gbif {
   border: 1px solid var(--soi-rule);

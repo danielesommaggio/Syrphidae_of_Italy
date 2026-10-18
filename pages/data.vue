@@ -7,6 +7,36 @@
     />
 
     <section class="container mx-auto box-border px-4 py-10 sm:py-14">
+      <!-- Same data as the GBIF dataset -->
+      <div class="dt-gbif mb-6">
+        <span
+          class="dt-gbif-mark"
+          aria-hidden="true"
+          ><GbifLogoIcon
+        /></span>
+        <p class="flex-1 min-w-0 text-sm leading-relaxed">
+          <strong>{{ t('gbifTitle') }}</strong>
+          {{ t('gbifText') }}
+          <template v-if="gbif.updated">{{ t('gbifUpdated', { d: fmtDate(gbif.updated, isIt) }) }}</template>
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <a
+            :href="LINKS.occurrences"
+            target="_blank"
+            rel="noopener"
+            class="soi-btn soi-btn-ink !py-1.5 !px-3.5 text-sm"
+            >{{ t('gbifOpen') }} ↗</a
+          >
+          <a
+            :href="LINKS.dataset"
+            target="_blank"
+            rel="noopener"
+            class="soi-btn soi-btn-line !py-1.5 !px-3.5 text-sm"
+            >{{ t('gbifDataset') }} ↗</a
+          >
+        </div>
+      </div>
+
       <!-- Stats -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div
@@ -399,6 +429,15 @@
                       >
                       <span class="block text-xs soi-muted">
                         {{ [r.sex && valueLabel('sex', r.sex), r.inst, r.cat].filter(Boolean).join(' · ') }}
+                        <button
+                          v-if="r.raw.occurrenceID"
+                          type="button"
+                          class="dt-gbif-link"
+                          :title="t('onGbifTitle')"
+                          @click="openRecordOnGbif(r.raw.occurrenceID)"
+                        >
+                          GBIF ↗
+                        </button>
                       </span>
                     </td>
                     <td class="text-sm">
@@ -446,7 +485,7 @@
                 {{ citeCopied ? t('copied') : t('copyCite') }}
               </button>
               <a
-                href="https://doi.org/10.15468/faryxm"
+                :href="LINKS.doi"
                 target="_blank"
                 rel="noopener"
                 class="soi-btn soi-btn-line justify-center"
@@ -461,12 +500,14 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useHead } from '@unhead/vue'
 import AtlasMap from './components/Atlas/AtlasMap.vue'
 import SeasonBars from './components/Atlas/SeasonBars.vue'
 import SoiPointMap from './components/Data/SoiPointMap.vue'
+import GbifLogoIcon from './components/GbifCitation/components/GbifLogoIcon.vue'
+import { LINKS, datasetCitation, fmtDate, openRecordOnGbif, useGbif } from './components/Gbif/useGbif.js'
 import { downloadCsv, fetchOccurrences } from './components/Data/useOccurrences.js'
 import { isIt, useT } from '@/utils/soiLang.js'
 
@@ -538,8 +579,15 @@ const t = useT({
     more: 'Show more ({n} left)',
     mapLabel: 'Map of the filtered records',
     mapNote: '{n} of {total} records have coordinates. Click a cluster to zoom in, a point for the record.',
+    gbifTitle: 'Published on GBIF.',
+    gbifText: 'These are the records of the SoI occurrence dataset on GBIF (doi:10.15468/faryxm), read live from our TaxonWorks database; GBIF refreshes its copy automatically.',
+    gbifUpdated: 'Last update on GBIF: {d}.',
+    gbifOpen: 'Open on GBIF',
+    gbifDataset: 'Dataset page',
+    onGbif: 'View on GBIF',
+    onGbifTitle: 'Open this record on GBIF',
     citeEyebrow: 'How to cite these data',
-    citeText: 'If you use these records, please cite Syrphidae of Italy, with the date of your download:',
+    citeText: 'If you use these records, please cite the SoI occurrence dataset (as GBIF does), with the date of your download:',
     copyCite: 'Copy citation',
     copied: 'Copied ✓',
     yearsVal: '{a}–{b}',
@@ -612,8 +660,15 @@ const t = useT({
     more: 'Mostra altri ({n} rimanenti)',
     mapLabel: 'Mappa dei record filtrati',
     mapNote: '{n} record su {total} hanno coordinate. Clicca un gruppo per ingrandire, un punto per il record.',
+    gbifTitle: 'Pubblicati su GBIF.',
+    gbifText: 'Questi sono i record del dataset di occorrenze di SoI su GBIF (doi:10.15468/faryxm), letti in tempo reale dal nostro database TaxonWorks; GBIF aggiorna la sua copia automaticamente.',
+    gbifUpdated: 'Ultimo aggiornamento su GBIF: {d}.',
+    gbifOpen: 'Apri su GBIF',
+    gbifDataset: 'Pagina del dataset',
+    onGbif: 'Vedi su GBIF',
+    onGbifTitle: 'Apri questo record su GBIF',
     citeEyebrow: 'Come citare questi dati',
-    citeText: 'Se usi questi record, cita Syrphidae of Italy, con la data del download:',
+    citeText: 'Se usi questi record, cita il dataset di occorrenze di SoI (come fa GBIF), con la data del download:',
     copyCite: 'Copia la citazione',
     copied: 'Copiato ✓',
     yearsVal: '{a}–{b}',
@@ -808,7 +863,8 @@ const points = computed(() =>
           `<b>${href ? `<a href="${href}">${name}</a>` : name}</b>`,
           esc([r.locality, r.where].filter(Boolean).join(', ')),
           esc([r.date, r.collector].filter(Boolean).join(' · ')),
-          esc([r.inst, r.cat].filter(Boolean).join(' '))
+          esc([r.inst, r.cat].filter(Boolean).join(' ')),
+          r.raw.occurrenceID ? `<a href="#" data-gbif-occ="${esc(r.raw.occurrenceID)}">${esc(t('onGbif'))} ↗</a>` : ''
         ]
           .filter(Boolean)
           .join('<br>')
@@ -871,18 +927,19 @@ function download() {
   downloadCsv(recordsSorted.value, `SoI_records_${new Date().toISOString().slice(0, 10)}.csv`)
 }
 
-// The dataset citation as GBIF writes it, with today's date and this site as the access point
-const gbifCitation = ref('Sommaggio D, Dal Pos D (2026). Syrphidae of Italy (SoI). https://doi.org/10.15468/faryxm')
-onMounted(async () => {
-  try {
-    const r = await fetch('https://api.gbif.org/v1/dataset/doi/10.15468/faryxm')
-    const text = (await r.json()).results?.[0]?.citation?.text
-    if (text) gbifCitation.value = text.replace(/\s*accessed via GBIF\.org on [\d-]+\.?\s*$/i, '')
-  } catch {
-    /* keep the default */
-  }
-})
-const citation = computed(() => `${gbifCitation.value} accessed via syrphidaeitaly.com on ${new Date().toISOString().slice(0, 10)}.`)
+// The GBIF dataset citation (title not repeated), accessed through this site
+const gbif = useGbif()
+const citation = computed(() => datasetCitation('syrphidaeitaly.com'))
+
+// "View on GBIF" links inside map popups
+function onPopupClick(e) {
+  const a = e.target.closest?.('[data-gbif-occ]')
+  if (!a) return
+  e.preventDefault()
+  openRecordOnGbif(a.getAttribute('data-gbif-occ'))
+}
+onMounted(() => document.addEventListener('click', onPopupClick))
+onBeforeUnmount(() => document.removeEventListener('click', onPopupClick))
 
 async function toClipboard(text, flag) {
   try {
@@ -1077,6 +1134,35 @@ a.dt-name:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.dt-gbif {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  padding: 0.9rem 1.1rem;
+  background: var(--soi-card);
+  border: 1px solid var(--soi-rule);
+  border-left: 5px solid #4c9b45;
+  border-radius: 6px;
+}
+.dt-gbif-mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  background: #4c9b45;
+  color: #fff;
+  font-size: 1.15rem;
+}
+.dt-gbif-link {
+  margin-left: 0.35rem;
+  font-weight: 700;
+  color: var(--soi-yellow-deep);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 .dt-cite {
   padding: 0.6rem 0.8rem;

@@ -72,7 +72,16 @@
           <ul class="mt-3 space-y-2 text-sm">
             <li>
               <a
-                href="https://doi.org/10.15468/faryxm"
+                :href="LINKS.publisher"
+                target="_blank"
+                rel="noopener"
+                class="soi-footer-link inline-flex items-center gap-2"
+                ><GbifLogoIcon class="soi-footer-gbif" />{{ t('publisher') }}</a
+              >
+            </li>
+            <li>
+              <a
+                :href="LINKS.dataset"
                 target="_blank"
                 rel="noopener"
                 class="soi-footer-link"
@@ -81,7 +90,7 @@
             </li>
             <li>
               <a
-                href="https://creativecommons.org/licenses/by/4.0/"
+                :href="LINKS.cc0"
                 target="_blank"
                 rel="noopener license"
                 class="soi-footer-link"
@@ -127,7 +136,7 @@
           >
           <FooterAnalytics class="italic" />
         </p>
-        <p class="soi-footer-muted">© {{ year }} Syrphidae of Italy · CC BY 4.0</p>
+        <p class="soi-footer-muted">© {{ year }} Syrphidae of Italy · {{ t('bottomLicence') }}</p>
       </div>
     </div>
   </footer>
@@ -139,6 +148,8 @@ import FooterCitation from '@/components/Footer/FooterCitation.vue'
 import FooterAnalytics from '@/components/Footer/FooterAnalytics.vue'
 import { isValidUrl } from '@/utils/url'
 import { menuLabel, useT } from '@/utils/soiLang.js'
+import GbifLogoIcon from '~/pages/components/GbifCitation/components/GbifLogoIcon.vue'
+import { LINKS } from '~/pages/components/Gbif/useGbif.js'
 
 const { header_logo_url, base_url } = __APP_ENV__
 const logoUrl = isValidUrl(header_logo_url)
@@ -154,8 +165,10 @@ const t = useT({
     explore: 'Explore',
     project: 'Project',
     open: 'Open data',
-    gbif: 'Dataset on GBIF',
-    licence: 'Content licensed CC BY 4.0',
+    publisher: 'Published on GBIF',
+    gbif: 'Occurrence dataset',
+    licence: 'Data licence: CC0 1.0 (public domain)',
+    bottomLicence: 'Data CC0 1.0 · images under the licence shown with each one',
     report: 'Report a problem',
     data: 'Data in',
     pages: 'built with',
@@ -167,8 +180,10 @@ const t = useT({
     explore: 'Esplora',
     project: 'Progetto',
     open: 'Dati aperti',
-    gbif: 'Dataset su GBIF',
-    licence: 'Contenuti con licenza CC BY 4.0',
+    publisher: 'Pubblicato su GBIF',
+    gbif: 'Dataset di occorrenze',
+    licence: 'Licenza dei dati: CC0 1.0 (pubblico dominio)',
+    bottomLicence: 'Dati CC0 1.0 · immagini con la licenza indicata per ciascuna',
     report: 'Segnala un problema',
     data: 'Dati in',
     pages: 'realizzato con',
@@ -180,8 +195,8 @@ const explore = computed(() => [
   { to: '/taxa', label: menuLabel('Genera') },
   { to: '/atlas', label: menuLabel('Atlas') },
   { to: '/keys', label: menuLabel('Keys') },
-  { to: '/resources/tw/filter/bibliography', label: menuLabel('Bibliography') },
-  { to: '/resources/tw/filter/dwc_otus', label: menuLabel('Data') }
+  { to: '/bibliography', label: menuLabel('Bibliography') },
+  { to: '/data', label: menuLabel('Data') }
 ])
 
 const project = computed(() => [
@@ -248,6 +263,10 @@ const project = computed(() => [
 .soi-footer-cite :deep(a) {
   color: var(--f-ink) !important;
   word-break: break-all;
+}
+.soi-footer-gbif {
+  font-size: 1.05rem;
+  color: #7cc46f;
 }
 .soi-footer-bottom {
   border-top: 1px solid var(--f-rule);
