@@ -26,3 +26,26 @@ per-species aggregate view).
   each row).
 
 See [`../../_shared/readme.md`](../../_shared/readme.md).
+
+## Site settings (`config.js`)
+
+- `HOME_COUNTRY` (SoI: `'Italy'`) — types collected elsewhere (e.g. syntypes of
+  synonyms) go to a collapsible "Type material from outside Italy" block above the
+  list; home-country records are listed before the rest; a **region** filter
+  (stateProvince) replaces the country filter, which only appears when records come
+  from more than one country. Leave it empty on other sites to keep the old layout.
+- `KIND_COLORS` — colours of the record kinds (type / specimen / field occurrence)
+  for the card labels and the map.
+
+## Map view
+
+`RecordsMap.vue` — a fourth view (List · Map · Phenology · Timeline): one dot per
+georeferenced record, coloured by kind, following the active filters; clicking a
+dot opens the record. Uses the site's base map (`config/maps.yml`).
+
+## Host requirements
+
+The panel uses `VButton` (`variant`/`size`/`ghost`), `VToggle`, and Tailwind's
+`bg-secondary`/`text-secondary` mapped to `--color-ui-accent`
+(`config/vendor/tailwind.config.cjs` + `config/style/theme.css`). Without these the
+view buttons, switches and bars render unstyled.

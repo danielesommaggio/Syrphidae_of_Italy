@@ -2,7 +2,7 @@
   <!-- Always rendered for an eligible lead (has own figures, or keys out an OTU) so the
        IntersectionObserver has an element to watch and the layout column keeps its width
        before images arrive. -->
-  <div v-if="eligible" ref="root" class="flex flex-col gap-2">
+  <div v-if="eligible" ref="root" class="flex flex-col gap-2" :class="isFallback ? 'key-fig-fallback' : 'key-fig-own'">
     <template v-if="items.length">
       <!-- one row: a single figure fills the column; two sit side by side -->
       <div class="flex gap-3">
@@ -25,7 +25,7 @@
       <button
         v-if="rest"
         type="button"
-        class="self-start text-xs text-secondary hover:underline"
+        class="key-print-hide self-start text-xs text-secondary hover:underline"
         @click="open(preview.length)"
       >+{{ rest }} more image{{ rest > 1 ? 's' : '' }}</button>
 
@@ -38,7 +38,7 @@
 
     <div
       v-else-if="fallbackEntry && fallbackEntry.state === 'loading'"
-      class="h-24 w-full rounded border border-base-muted animate-pulse"
+      class="key-fig-fallback h-24 w-full rounded border border-base-muted animate-pulse"
       aria-hidden="true"
     />
 

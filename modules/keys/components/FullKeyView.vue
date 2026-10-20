@@ -5,7 +5,7 @@
       :key="couplet.id"
       :id="`couplet-${couplet.coupletNumber}`"
       :data-current="isCurrent(couplet) || null"
-      class="mb-6 scroll-mt-24 rounded transition-colors"
+      class="group relative mb-6 scroll-mt-24 rounded transition-colors"
       :class="isCurrent(couplet)
         ? 'ring-2 ring-base-muted ring-offset-2 ring-offset-base-foreground bg-base-muted/20'
         : ''"
@@ -14,7 +14,7 @@
         <!-- Couplet number: thin outline circle -->
         <RouterLink
           :to="coupletTo(couplet.coupletNumber)"
-          class="shrink-0 inline-flex items-center justify-center w-8 h-8 tabular-nums font-semibold text-sm rounded-full border border-[#c9c7bf] text-[#44443f] hover:border-[#44443f] hover:text-black transition-colors"
+          class="key-couplet-num shrink-0 inline-flex items-center justify-center w-8 h-8 tabular-nums font-semibold text-sm rounded-full border border-[#c9c7bf] text-[#44443f] hover:border-[#44443f] hover:text-black transition-colors"
           :aria-label="`Couplet ${couplet.coupletNumber}`"
         >{{ couplet.coupletNumber }}</RouterLink>
 
@@ -92,6 +92,12 @@
               </div>
             </div>
           </div>
+          <!-- write to the curators about this couplet (on hover / focus) -->
+          <a
+            v-if="feedback"
+            :href="feedback(couplet.coupletNumber)"
+            class="key-print-hide mt-1 inline-block text-xs text-base-soft opacity-0 group-hover:opacity-100 focus:opacity-100 hover:underline transition-opacity"
+          >✉ {{ reportLabel }}</a>
         </div>
       </div>
     </section>
@@ -115,6 +121,11 @@ import { partitionCoupletFigures } from '../lib/images.js'
 import LeadText from './LeadText.vue'
 import TaxonLink from './TaxonLink.vue'
 import LeadFigures from './LeadFigures.vue'
+import { lang as soiLang } from '@/utils/soiLang.js'
+
+// mailto: link to the curators for one couplet (provided by KeyView)
+const feedback = inject('keyFeedback', null)
+const reportLabel = computed(() => (soiLang.value === 'it' ? 'Problemi con questa coppia?' : 'Problem with this couplet?'))
 
 const props = defineProps({
   keyId: { type: [String, Number], required: true },

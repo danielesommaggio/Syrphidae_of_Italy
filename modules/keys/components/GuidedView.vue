@@ -43,6 +43,16 @@
       <p class="mb-2 text-xs italic text-base-soft">Figure for both leads</p>
       <LeadFigures :figures="coupletFigures.shared" />
     </div>
+
+    <p
+      v-if="feedback"
+      class="key-print-hide mt-4 text-right text-xs"
+    >
+      <a
+        :href="feedback(current.coupletNumber)"
+        class="text-base-soft hover:underline"
+      >✉ {{ reportLabel }}</a>
+    </p>
   </div>
 </template>
 
@@ -53,6 +63,11 @@ import { leadGeoStatus } from '../lib/geoMatch.js'
 import { partitionCoupletFigures } from '../lib/images.js'
 import GuidedChoice from './GuidedChoice.vue'
 import LeadFigures from './LeadFigures.vue'
+import { lang as soiLang } from '@/utils/soiLang.js'
+
+// mailto: link to the curators for this couplet (provided by KeyView)
+const feedback = inject('keyFeedback', null)
+const reportLabel = computed(() => (soiLang.value === 'it' ? 'Problemi con questa coppia? Scrivici' : 'Stuck at this couplet? Tell us'))
 
 const props = defineProps({
   keyId: { type: [String, Number], required: true },

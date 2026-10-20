@@ -153,6 +153,7 @@ import shapes, { VIEWBOX } from '~/pages/components/Atlas/italyRegions.js'
 import { REGION_ALIASES } from '~/pages/components/Atlas/useAtlas.js'
 import SeasonBars from '~/pages/components/Atlas/SeasonBars.vue'
 import RedListBadge from '~/pages/components/Atlas/RedListBadge.vue'
+import { fixSpelling } from '../PanelBiology/traits.js'
 
 const props = defineProps({
   otuId: { type: Number, required: true }
@@ -282,7 +283,8 @@ const regionNames = computed(() => [...regionSet.value].sort())
 
 function textOf(topic) {
   const c = contents.value.find((x) => x.topic_id === topic)
-  return c ? String(c.text || '').trim() : ''
+  // same spelling fixes as the Biology tab (Polivoltine → Polyvoltine, Zoophagus → Zoophagous…)
+  return c ? fixSpelling(String(c.text || '').trim()) : ''
 }
 
 const content = computed(() => {

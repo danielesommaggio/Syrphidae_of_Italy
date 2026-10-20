@@ -3,7 +3,22 @@
     <VSpinner v-if="loading" />
     <div v-else-if="error" class="text-danger">Could not load key {{ route.params.id }}.</div>
     <div v-else class="rounded-lg border border-base-muted bg-base-foreground p-4 sm:p-6">
-      <div class="flex items-start justify-between gap-4">
+      <!-- printed only: the first page -->
+      <KeyFrontPage
+        :project="project_citation || 'Syrphidae of Italy (SoI)'"
+        :title-html="meta.title"
+        :scope-html="meta.taxonomicScopeHtml || meta.taxonomicScope || ''"
+        :description="meta.description || ''"
+        :primary-html="primaryCitation || ''"
+        :authors="String(project_authors || '').replace(/\s*\(\d{4}\)\.?\s*$/, '')"
+        :version="version"
+        :date="printDate"
+        :citation="printCitation"
+        :url="printUrl"
+        :lang="soiLang"
+      />
+
+      <div class="key-screen-header flex items-start justify-between gap-4">
         <KeyHeader
           class="flex-1"
           :meta="meta"
@@ -17,8 +32,15 @@
           v-model:geo-selection="geoSelection"
           @geo-open="geo.ensureLoaded()"
         />
-        <FormatToggle v-model="format" class="mt-1 shrink-0 key-print-hide" />
+        <div class="mt-1 shrink-0 flex flex-col items-end gap-2 key-print-hide">
+          <FormatToggle v-model="format" />
+          <PrintKeyButton
+            :busy="printing"
+            @print="printKey"
+          />
+        </div>
       </div>
+
 
       <GuidedView
         v-if="format === 'guided'"
@@ -38,6 +60,48 @@
         @open-citation="activeCitation = $event"
       />
 
+      <!-- every taxon reached, with its couplets (collapsed on screen, printed) -->
+      <KeyTaxaList
+        :taxa="taxaList"
+        :key-id="route.params.id"
+        :lang="soiLang"
+      />
+
+      <!-- printed only: the works cited in the key -->
+      <section
+        v-if="references.length"
+        class="key-print-only key-print-refs [&_i]:italic"
+      >
+        <h2>{{ soiLang === 'it' ? 'Bibliografia' : 'References' }}</h2>
+        <p
+          v-for="(r, i) in references"
+          :key="i"
+          v-html="sanitizeAndLinkifyHtml(r.full)"
+        />
+      </section>
+
+      <!-- printed only: last block — citation and QR code to the key online (easy to cut off) -->
+      <div class="key-print-only key-print-end">
+        <p class="key-print-cite">
+          <strong>{{ citeLabel }}</strong> {{ printCitation }}
+        </p>
+        <a
+          :href="printUrl"
+          class="key-front-qr"
+        >
+          <span v-html="printQr" />
+          <small>{{ soiLang === 'it' ? 'La chiave aggiornata online' : 'The current key online' }}</small>
+        </a>
+      </div>
+
+      <!-- on screen: write to the curators about the key -->
+      <p class="key-print-hide mt-6 text-sm text-base-soft">
+        <a
+          :href="feedbackFor('')"
+          class="text-secondary hover:underline"
+        >✉ {{ soiLang === 'it' ? 'Segnala un problema con questa chiave' : 'Report a problem with this key' }}</a>
+      </p>
+
       <CoupletCitation
         v-if="activeCitation"
         :citation="activeCitation"
@@ -48,7 +112,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, provide } from 'vue'
+import { ref, computed, watch, onMounted, provide, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { makeAPIRequest } from '@/utils/request'
 import { buildNodes, orderedCouplets, terminalOtus, lowestCommonAncestor, descendantOtus } from './lib/tree.js'
@@ -59,6 +123,14 @@ import KeyHeader from './components/KeyHeader.vue'
 import FullKeyView from './components/FullKeyView.vue'
 import GuidedView from './components/GuidedView.vue'
 import FormatToggle from './components/FormatToggle.vue'
+import PrintKeyButton from './components/PrintKeyButton.vue'
+import KeyFrontPage from './components/KeyFrontPage.vue'
+import KeyTaxaList from './components/KeyTaxaList.vue'
+import { taxaReached, versionStamp, feedbackMailto, qrSvg } from './lib/keyExtras.js'
+import curators from '~/pages/components/Section/Data/curators.js'
+import { sanitizeAndLinkifyHtml } from '@/utils'
+import { lang as soiLang } from '@/utils/soiLang.js'
+import { keyCitation, pageCss, imagesReady } from './lib/printKey.js'
 import CoupletCitation from './components/CoupletCitation.vue'
 import { readFormat, writeFormat } from './lib/format.js'
 import { buildCompletenessReport, finestRank } from './lib/completeness.js'
@@ -78,7 +150,86 @@ const format = ref('guided')
 // ?format= comes from the router query (in hash mode the URL search string is empty, so it
 // must not be read off the location object); the localStorage default applies post-mount (F2).
 onMounted(() => { format.value = readFormat(route.query.format) })
-watch(format, (v) => writeFormat(v))
+watch(format, (v) => { if (!printing.value) writeFormat(v) })
+
+// ---- Print / PDF: the full key, with the citation and running page numbers
+const printing = ref(false)
+const { project_authors, project_citation, project_url, hash_mode } = __APP_ENV__
+const printDate = ref(new Date().toISOString().slice(0, 10))
+// the public site, e.g. "https://syrphidaeitaly.com/#"
+const siteBase = `https://${(project_url || 'syrphidaeitaly.com').replace(/^https?:\/\//, '').replace(/\/$/, '')}${hash_mode ? '/#' : ''}`
+const printUrl = computed(() => `${siteBase}/key/${route.params.id}?format=full`)
+
+// Links in the PDF: taxon names and other site links → the public website (absolute, so they
+// work from the PDF); couplet numbers → the couplet inside the PDF. Returns a restore function.
+function linksForPdf(root) {
+  const changed = []
+  for (const a of root?.querySelectorAll('a[href]') || []) {
+    const h = a.getAttribute('href') || ''
+    const path = h.replace(/^#/, '')
+    const couplet = path.match(/^\/key\/[^/?]+\/(\d+)/)
+    let to = null
+    if (couplet) to = `#couplet-${couplet[1]}`
+    else if (path.startsWith('/')) to = siteBase + path
+    if (to) { changed.push([a, h]); a.setAttribute('href', to) }
+  }
+  return () => changed.forEach(([a, h]) => a.setAttribute('href', h))
+}
+const printCitation = computed(() => keyCitation({
+  authors: project_authors, project: project_citation || 'Syrphidae of Italy (SoI)',
+  title: meta.value.title, url: printUrl.value, date: printDate.value
+}))
+// ---- extras: taxa reached, version, taxa not reached, feedback to the curators
+const taxaList = computed(() => taxaReached(nodes.value))
+const printQr = computed(() => qrSvg(printUrl.value, 100))
+const version = computed(() => versionStamp({
+  updatedAt: listMeta.value.key_updated_at || listMeta.value.updated_at || '',
+  couplets: meta.value.coupletsCount, taxa: meta.value.otusCount, lang: soiLang.value
+}))
+const curatorEmails = curators.map((c) => c.email).filter(Boolean).join(',')
+function feedbackFor(couplet) {
+  return feedbackMailto({
+    to: curatorEmails, keyTitle: meta.value.title, couplet: couplet ? String(couplet) : '',
+    url: couplet ? `${siteBase}/key/${route.params.id}/${couplet}` : printUrl.value, lang: soiLang.value
+  })
+}
+provide('keyFeedback', feedbackFor)
+
+const citeLabel = computed(() => (soiLang.value === 'it' ? 'Come citare:' : 'How to cite:'))
+
+async function printKey({ figures = true } = {}) {
+  if (printing.value) return
+  printing.value = true
+  printDate.value = new Date().toISOString().slice(0, 10)
+  const before = format.value
+  const html = document.documentElement
+  const style = document.createElement('style')
+  style.id = 'key-print-page'
+  style.textContent = pageCss({
+    footerLeft: `${String(meta.value.title || '').replace(/<[^>]+>/g, '')} · ${project_citation || 'Syrphidae of Italy (SoI)'}`,
+    headerRight: version.value,
+    footerRight: soiLang.value === 'it' ? 'Pag.' : 'Page'
+  })
+  document.head.appendChild(style)
+  html.classList.add('key-printing')
+  html.classList.toggle('key-print-nofig', !figures)
+  format.value = 'full'
+  await nextTick()
+  if (figures) await imagesReady(document.querySelector('.tp-keys'))
+  const restoreLinks = linksForPdf(document.querySelector('.tp-keys'))
+  const done = () => {
+    restoreLinks()
+    html.classList.remove('key-printing', 'key-print-nofig')
+    style.remove()
+    format.value = before
+    printing.value = false
+    window.removeEventListener('afterprint', done)
+  }
+  window.addEventListener('afterprint', done)
+  window.print()
+  // some browsers never fire afterprint; print() blocks until the dialog closes anyway
+  setTimeout(() => { if (printing.value) done() }, 1000)
+}
 
 // Monotonic request generation. Every shared-ref write in load / loadCitations /
 // loadCompleteness is guarded by `myGen === loadGen`, so a slow load(A) can't clobber
@@ -613,9 +764,60 @@ watch(() => route.params.id, (id) => id && load(id), { immediate: true })
 <style>
 /* Unscoped so `.key-print-hide` inside child components still matches; the two broad
    rules are namespaced under `.tp-keys` so they don't leak app-wide once a key opens (F5). */
+.key-print-only { display: none; }
+
 @media print {
   .key-print-hide { display: none !important; }
   .tp-keys { max-width: none !important; }
   .tp-keys a { text-decoration: none !important; color: inherit !important; }
+
+  /* Print / PDF button: only the key, plain and black on white */
+  html.key-printing body { background: #fff !important; }
+  html.key-printing .tp-header,
+  html.key-printing footer,
+  html.key-printing .soi-footer { display: none !important; }
+  html.key-printing .key-print-only { display: block !important; }
+  html.key-printing .tp-keys { padding: 0 !important; font-size: 10.5pt; color: #000; }
+  html.key-printing .tp-keys > div { border: 0 !important; padding: 0 !important; background: none !important; box-shadow: none !important; }
+  html.key-printing .tp-keys * { box-shadow: none !important; }
+  /* taxon names stay clickable in the PDF (links to the website): dark blue, no underline */
+  html.key-printing .tp-keys a[href^="http"] { color: #1f4e8c !important; }
+  html.key-printing .tp-keys .opacity-40,
+  html.key-printing .tp-keys .opacity-50 { opacity: 1 !important; }
+  html.key-printing .tp-keys section[id^="couplet-"] { margin-bottom: 3.5mm !important; background: none !important; --tw-ring-shadow: 0 0 #0000 !important; }
+  /* never split a lead; keep a couplet number with its first lead */
+  html.key-printing .tp-keys section[id^="couplet-"] .mb-4 { break-inside: avoid; margin-bottom: 2mm !important; }
+  html.key-printing.key-print-nofig .tp-keys section[id^="couplet-"] { break-inside: avoid; }
+  /* figures: the key's own plates, smaller; no taxon photos (those are online only) */
+  html.key-printing .tp-keys .key-fig-fallback { display: none !important; }
+  html.key-printing .tp-keys img { max-height: 55mm !important; width: auto !important; max-width: 100% !important; }
+  html.key-printing .tp-keys figure button { border: 0 !important; }
+  html.key-printing.key-print-nofig .tp-keys figure,
+  html.key-printing.key-print-nofig .tp-keys .key-fig-own { display: none !important; }
+  /* front page, then the key; the screen header is replaced by the front page */
+  html.key-printing .key-screen-header { display: none !important; }
+  .key-front { break-after: page; padding-top: 30mm; }
+  .key-front-site { font: 600 10pt Georgia, serif; letter-spacing: .08em; text-transform: uppercase; color: #555; margin: 0; }
+  .key-front-title { font: 700 26pt/1.15 Georgia, serif; margin: 4mm 0 6mm; }
+  .key-front-title i, .key-front-scope i, .key-print-refs i { font-style: italic; }
+  .key-front-scope, .key-front-desc { font-size: 11pt; margin: 0 0 3mm; }
+  .key-front-scope > span:first-child, .key-front-desc > span:first-child, .key-front-meta p > span:first-child { color: #555; }
+  .key-front-meta { display: flex; justify-content: space-between; align-items: flex-end; gap: 10mm; margin-top: 40mm; padding-top: 5mm; border-top: 1px solid #999; font-size: 9.5pt; }
+  .key-front-meta p { margin: 0 0 1.5mm; }
+  .key-front-cite { margin-top: 3mm !important; }
+  .key-front-qr { display: flex; flex-direction: column; align-items: center; gap: 1mm; color: #000 !important; text-decoration: none; }
+  .key-front-qr small { font-size: 7.5pt; color: #555; white-space: nowrap; }
+  /* the list of taxa is always printed, on a new page, with the references */
+  html.key-printing .key-taxa { break-before: page; border: 0 !important; }
+  html.key-printing .key-taxa-list { display: block !important; columns: 2; font-size: 9.5pt; }
+  .key-print-refs { break-before: page; font-size: 9pt; line-height: 1.4; }
+  .key-print-refs h2 { font-size: 12pt; font-weight: 600; margin: 0 0 3mm; }
+  .key-print-refs p { margin: 0 0 2mm; padding-left: 5mm; text-indent: -5mm; }
+  .key-print-cite { font-size: 9pt; line-height: 1.4; margin: 0 0 5mm; padding: 2mm 3mm; border-left: 2px solid #999; }
+  .key-print-end { break-inside: avoid; display: flex !important; justify-content: space-between; align-items: flex-end; gap: 10mm; margin: 8mm 0 0; padding-top: 4mm; border-top: 1px solid #999; }
+  .key-print-end .key-print-cite { margin: 0; border: 0; padding: 0; }
+  /* classic numbering: "1." in bold, no circle */
+  html.key-printing .tp-keys .key-couplet-num { border: 0 !important; border-radius: 0 !important; width: auto !important; min-width: 7mm; height: auto !important; justify-content: flex-start !important; align-items: flex-start !important; font-weight: 700; font-size: 10.5pt; }
+  html.key-printing .tp-keys .key-couplet-num::after { content: '.'; }
 }
 </style>

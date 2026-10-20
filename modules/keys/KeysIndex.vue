@@ -111,6 +111,55 @@
         </div>
       </li>
     </ul>
+
+    <!-- species → keys -->
+    <section
+      v-if="!loading && species.length"
+      class="mt-12"
+    >
+      <h2 class="soi-serif text-2xl font-semibold">{{ kt('species') }}</h2>
+      <p class="mt-1 text-sm soi-muted">{{ kt('speciesLede') }}</p>
+      <div class="mt-4 w-full sm:w-96">
+        <KeySearchBar
+          v-model="speciesQuery"
+          :placeholder="kt('speciesFilter')"
+        />
+      </div>
+      <p
+        v-if="!speciesVisible.length"
+        class="mt-4 soi-muted"
+      >{{ kt('noSpecies') }}</p>
+      <ul class="mt-4 columns-1 md:columns-2 gap-10 text-sm [&_i]:italic">
+        <li
+          v-for="sp in speciesVisible"
+          :key="sp.otuId"
+          class="break-inside-avoid py-1 border-b border-[color:var(--soi-rule)]"
+        >
+          <RouterLink
+            :to="{ name: 'otus-id', params: { id: sp.otuId } }"
+            class="soi-link"
+          ><i>{{ sp.label }}</i></RouterLink>
+          <span class="soi-muted"> → </span>
+          <template
+            v-for="(k, i) in sp.keys"
+            :key="k.id"
+          >
+            <RouterLink
+              :to="{ name: 'dichotomous-key', params: { id: k.id } }"
+              class="hover:underline"
+            >{{ k.title }}</RouterLink><span v-if="i < sp.keys.length - 1">, </span>
+          </template>
+        </li>
+      </ul>
+      <button
+        v-if="!speciesQuery.trim() && species.length > SPECIES_LIMIT && !showAllSpecies"
+        type="button"
+        class="mt-4 soi-btn !py-1.5 !px-4 !text-sm"
+        @click="showAllSpecies = true"
+      >
+        {{ kt('allSpecies', { n: species.length }) }}
+      </button>
+    </section>
   </div>
 </template>
 
@@ -118,8 +167,8 @@
 import { useT as useMastheadT } from '@/utils/soiLang.js'
 
 const kt = useMastheadT({
-  en: { filter: 'Filter keys by taxon name…', count: '{n} of {total} keys', none: 'No public keys in this project yet.', noMatch: 'No keys match “{q}”.', scope: 'Scope', source: 'Source', couplets: 'couplets', start: 'Start key' },
-  it: { filter: 'Filtra le chiavi per nome del taxon…', count: '{n} di {total} chiavi', none: 'Nessuna chiave pubblica in questo progetto.', noMatch: 'Nessuna chiave corrisponde a “{q}”.', scope: 'Ambito', source: 'Fonte', couplets: 'distici', start: 'Inizia la chiave' }
+  en: { species: 'Find the key for a species', speciesLede: 'Every taxon the keys lead to, with the key(s) that reach it.', speciesFilter: 'Species name…', allSpecies: 'Show all {n}', noSpecies: 'No taxon matches.', filter: 'Filter keys by taxon name…', count: '{n} of {total} keys', none: 'No public keys in this project yet.', noMatch: 'No keys match “{q}”.', scope: 'Scope', source: 'Source', couplets: 'couplets', start: 'Start key' },
+  it: { species: 'Trova la chiave per una specie', speciesLede: 'Tutti i taxa a cui arrivano le chiavi, con la chiave (o le chiavi) che li raggiungono.', speciesFilter: 'Nome della specie…', allSpecies: 'Mostra tutti i {n}', noSpecies: 'Nessun taxon corrisponde.', filter: 'Filtra le chiavi per nome del taxon…', count: '{n} di {total} chiavi', none: 'Nessuna chiave pubblica in questo progetto.', noMatch: 'Nessuna chiave corrisponde a “{q}”.', scope: 'Ambito', source: 'Fonte', couplets: 'distici', start: 'Inizia la chiave' }
 })
 
 const mt = useMastheadT({
@@ -132,6 +181,20 @@ import { makeAPIRequest } from '@/utils/request'
 import { sanitizeAndLinkifyHtml } from '@/utils'
 import { rankIndex } from './lib/completeness.js'
 import KeySearchBar from './KeySearchBar.vue'
+import { buildNodes } from './lib/tree.js'
+import { taxaReached, speciesIndex } from './lib/keyExtras.js'
+
+// Species → keys: every taxon reached by the keys, with the keys that reach it
+const species = computed(() => speciesIndex(keys.value.map((k) => ({ id: k.id, title: k.title, taxa: k.taxa }))))
+const speciesQuery = ref('')
+const SPECIES_LIMIT = 40
+const speciesShown = computed(() => {
+  const q = speciesQuery.value.trim().toLowerCase()
+  const list = q ? species.value.filter((s) => s.label.toLowerCase().includes(q)) : species.value
+  return q ? list : list.slice(0, SPECIES_LIMIT)
+})
+const showAllSpecies = ref(false)
+const speciesVisible = computed(() => (showAllSpecies.value && !speciesQuery.value.trim() ? species.value : speciesShown.value))
 
 const loading = ref(true)
 const keys = ref([])
@@ -156,7 +219,8 @@ const filteredKeys = computed(() => {
     const haystack = [
       plain(k.titleHtml || k.title),
       plain(k.scopeHtml || k.scope),
-      k.description || ''
+      k.description || '',
+      ...(k.taxa || []).map((t) => t.label)
     ].join(' ').toLowerCase()
     return haystack.includes(q)
   })
@@ -195,8 +259,12 @@ onMounted(async () => {
       rows.map((r) =>
         makeAPIRequest
           .get(`/leads/key/${r.id}`)
-          .then((res) => res.data?.metadata || {})
-          .catch(() => ({}))
+          .then((res) => ({
+            ...(res.data?.metadata || {}),
+            // the taxa this key leads to (for the species → key list and the filter)
+            _taxa: taxaReached(buildNodes(res.data?.data?.entries || {}, res.data?.data?.leads || {}))
+          }))
+          .catch(() => ({ _taxa: [] }))
       )
     )
 
@@ -252,7 +320,8 @@ onMounted(async () => {
           taxaCount: r.otus_count
             ? Math.max(0, r.otus_count - (r.otu_id ? 1 : 0))
             : null,
-          updatedInWords: r.key_updated_at_in_words || null
+          updatedInWords: r.key_updated_at_in_words || null,
+          taxa: metas[i]._taxa || []
         }
       })
       .sort((a, b) => {

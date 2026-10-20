@@ -6,6 +6,11 @@
       :max="MAX"
       :total-specimen-count="totalSpecimenCount"
       :countries="availableCountries"
+      :regions="availableRegions"
+      :home-country="HOME_COUNTRY"
+      :map-points="mapPoints"
+      :not-mapped="notMappedCount"
+      v-model:filter-regions="filterRegions"
       :collectors="availableCollectors"
       :month-counts="monthCounts"
       :year-counts="yearCounts"
@@ -55,6 +60,7 @@ import DwcTable from '../../_shared/DwcTable.vue'
 import ImageLightbox from '../../_shared/ImageLightbox.vue'
 import { isSpecimenType, resolveSpecimenRef } from '../../_shared/specimenRef.js'
 import { groupRecords, groupCountLabel } from '../lib/groupRecords'
+import { HOME_COUNTRY } from '../config.js'
 
 const UUID_RE = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
 
@@ -180,6 +186,8 @@ const bioAssociationsIndex = ref(new Map())
 // Basic client-side filters — all data for this OTU is already fetched, so
 // filtering/re-grouping is instant with no extra API calls.
 const filterCountries = ref([])
+// Regions (stateProvince) of the site's home country — see ../config.js
+const filterRegions = ref([])
 const filterCollectors = ref([])
 const filterTypeOnly = ref(false)
 const filterMediaOnly = ref(false)
@@ -200,12 +208,19 @@ const availableCountries = computed(() =>
   [...new Set(dwcRecords.value.map((r) => r.country).filter(Boolean))].sort()
 )
 
+const availableRegions = computed(() =>
+  HOME_COUNTRY
+    ? [...new Set(dwcRecords.value.filter((r) => r.country === HOME_COUNTRY).map((r) => r.stateProvince).filter(Boolean))].sort()
+    : []
+)
+
 const availableCollectors = computed(() =>
   [...new Set(dwcRecords.value.map((r) => r.recordedBy).filter(Boolean))].sort()
 )
 
 function matchesBaseFilters(r) {
   if (filterCountries.value.length && !filterCountries.value.includes(r.country)) return false
+  if (filterRegions.value.length && !(r.country === HOME_COUNTRY && filterRegions.value.includes(r.stateProvince))) return false
   if (filterCollectors.value.length && !filterCollectors.value.includes(r.recordedBy)) return false
   if (filterTypeOnly.value && !r.typeStatus) return false
   if (filterMediaOnly.value && !(r.associatedMedia && r.associatedMedia.length)) return false
@@ -717,6 +732,8 @@ function toListItem(group) {
       key,
       typeStatus: first.typeStatus,
       typeStatusHtml: typeStatusHtml(first.typeStatus),
+      ...kindOf(first),
+      country: first.country || '',
       identity: makeIdentityHtml(group),
       identificationQualifierHtml: identificationQualifierHtml(first),
       headline: first.headline,
@@ -735,6 +752,8 @@ function toListItem(group) {
     key,
     typeStatus: first.typeStatus,
     typeStatusHtml: typeStatusHtml(first.typeStatus),
+    ...kindOf(first),
+    country: first.country || '',
     identity: makeIdentityHtml(group),
     identificationQualifierHtml: '',
     headline: first.headline,
@@ -745,7 +764,38 @@ function toListItem(group) {
   }
 }
 
-const listItems = computed(() => groupRecords(filteredRecords.value).map(toListItem))
+// What kind of record this is, shown as a small label on each card and as the
+// dot colour on the map: a type specimen, a preserved specimen, or a field
+// occurrence (an observation documented by photographs, no voucher).
+function kindOf(record) {
+  const kind = record.typeStatus ? 'type' : record.dwc_occurrence_object_type === 'FieldOccurrence' ? 'field' : 'specimen'
+  const kindLabel = { type: 'Type specimen', specimen: 'Specimen', field: 'Field occurrence' }[kind]
+  return { kind, kindLabel }
+}
+
+// Home-country records first (types keep their place at the top; ListRecords
+// moves types from elsewhere into their own block)
+const listItems = computed(() => {
+  const items = groupRecords(filteredRecords.value).map(toListItem)
+  if (!HOME_COUNTRY) return items
+  const rank = (i) => (i.typeStatus ? 0 : i.country === HOME_COUNTRY ? 1 : 2)
+  return items.map((i, n) => [i, n]).sort((a, b) => rank(a[0]) - rank(b[0]) || a[1] - b[1]).map(([i]) => i)
+})
+
+// Map: one point per georeferenced record, following the active filters
+const mapPoints = computed(() =>
+  filteredRecords.value
+    .filter((r) => r.decimalLatitude && r.decimalLongitude)
+    .map((r) => ({
+      lat: Number(r.decimalLatitude),
+      lng: Number(r.decimalLongitude),
+      kind: kindOf(r).kind,
+      label: [r.typeStatus, r.catalogNumber, [r.stateProvince, r.country].filter(Boolean).join(', '), getDate(r)].filter(Boolean).join(' · '),
+      detail: toDetailRef(r)
+    }))
+    .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lng))
+)
+const notMappedCount = computed(() => filteredRecords.value.length - mapPoints.value.length)
 
 // The true specimen count (individualCount summed) — distinct from
 // listItems.length, which counts grouped rows, and from filteredRecords

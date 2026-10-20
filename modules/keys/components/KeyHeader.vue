@@ -23,7 +23,8 @@
 
     <p v-if="meta.attribution" class="mt-1 text-sm text-base-soft">{{ attributionText }}</p>
 
-    <div class="mt-3 flex flex-wrap gap-2 text-xs text-base-soft">
+    <!-- counts, completeness and the area filter: on screen only -->
+    <div class="key-print-hide mt-3 flex flex-wrap gap-2 text-xs text-base-soft">
       <span v-if="meta.coupletsCount" class="border border-base-muted rounded px-2 py-0.5">
         {{ meta.coupletsCount }} couplets
       </span>

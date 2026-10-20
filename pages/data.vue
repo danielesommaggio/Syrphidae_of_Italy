@@ -336,7 +336,7 @@
                         :to="s.otu ? { name: 'otus-id-overview', params: { id: s.otu } } : undefined"
                         class="dt-name"
                         ><i v-if="s.italic">{{ s.name }}</i
-                        ><template v-else>{{ s.name }}</template></component
+                        ><template v-else>{{ s.name === '—' ? t('noName') : s.name }}</template></component
                       >
                       <span class="block text-xs soi-muted">{{ s.subfamily }}</span>
                     </td>
@@ -580,6 +580,7 @@ const t = useT({
     linkCopied: 'Link copied ✓',
     none: 'No records match. Try fewer filters or another spelling.',
     colSpecies: 'Species',
+    noName: 'Not identified to genus or species',
     colRecords: 'Records',
     colRegions: 'Where',
     colYears: 'Years',
@@ -663,6 +664,7 @@ const t = useT({
     linkCopied: 'Link copiato ✓',
     none: 'Nessun record corrisponde. Prova con meno filtri o un’altra grafia.',
     colSpecies: 'Specie',
+    noName: 'Non identificati a genere o specie',
     colRecords: 'Record',
     colRegions: 'Dove',
     colYears: 'Anni',

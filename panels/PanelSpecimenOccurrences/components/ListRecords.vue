@@ -201,7 +201,50 @@
               </template>
             </div>
 
-            <ul v-else>
+            <div v-else-if="activeView === 'map'">
+              <RecordsMap
+                :points="props.mapPoints"
+                :not-mapped="props.notMapped"
+                @show-detail="(d) => emit('show-detail', d)"
+              />
+            </div>
+
+            <div v-else>
+            <!-- Types collected outside the home country (e.g. syntypes of synonyms) -->
+            <details
+              v-if="foreignTypes.length"
+              class="mb-3 mx-2 rounded-md border border-base-muted"
+            >
+              <summary class="cursor-pointer select-none list-none flex items-center gap-2 px-3 py-2 text-sm font-medium">
+                <span class="inline-block motion-safe:transition-transform">›</span>
+                Type material from outside {{ props.homeCountry }}
+                <span class="inline-block text-xs font-medium bg-danger text-white rounded px-1.5 py-0.5">{{ foreignTypes.length }}</span>
+                <span class="text-xs font-normal opacity-60">types of this species and its synonyms</span>
+              </summary>
+              <ul class="px-1 pb-2">
+                <li
+                  v-for="item in foreignTypes"
+                  :key="item.key"
+                  class="flex flex-col text-sm px-2 py-3 border-t border-base-muted"
+                  :class="item.detail ? 'cursor-pointer hover:bg-base-muted' : ''"
+                  @click="item.detail && emit('show-detail', item.detail)"
+                >
+                  <span
+                    class="inline-block w-fit text-xs font-medium bg-danger text-white rounded px-1.5 py-0.5 mb-1"
+                    v-html="item.typeStatusHtml"
+                  />
+                  <span
+                    v-if="item.identity"
+                    class="text-xs"
+                    v-html="item.identity"
+                  />
+                  <span class="font-medium">{{ item.headline }}</span>
+                  <span class="text-xs" v-html="item.summary" />
+                </li>
+              </ul>
+            </details>
+
+            <ul>
               <li
                 v-for="item in items"
                 :key="item.key"
@@ -210,6 +253,13 @@
                 @click="item.detail && emit('show-detail', item.detail)"
               >
                 <div class="flex flex-col">
+                  <span
+                    v-if="item.kindLabel && !item.typeStatus"
+                    class="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider opacity-70 mb-1"
+                  ><span
+                    class="inline-block w-2 h-2 rounded-full"
+                    :style="{ background: KIND_COLORS[item.kind] }"
+                  />{{ item.kindLabel }}</span>
                   <span
                     v-if="item.typeStatus"
                     class="inline-block w-fit text-xs font-medium bg-danger text-white rounded px-1.5 py-0.5 mb-1"
@@ -249,7 +299,7 @@
                 />
               </li>
               <li
-                v-if="!showAll && list.length > props.max"
+                v-if="!showAll && mainList.length > props.max"
                 class="flex justify-start pt-4 px-2 cursor-pointer border-base-muted text-sm"
               >
                 <div
@@ -259,23 +309,26 @@
                   <IconPlusCircle class="h-5 w-5" />
                 </div>
                 <span @click="() => (showAll = true)"
-                  >... Show all ... ({{ list.length }})</span
+                  >... Show all ... ({{ mainList.length }})</span
                 >
               </li>
               <li
-                v-else-if="!list.length"
+                v-else-if="!mainList.length && !foreignTypes.length"
                 class="px-2 py-4 text-sm opacity-50"
               >No specimen or field-occurrence records.</li>
             </ul>
+            </div>
           </div>
 
           <div class="w-40 shrink-0 flex flex-col gap-2 pl-3 border-l border-base-muted text-sm">
             <div class="flex flex-col gap-1 mb-1">
               <VButton size="sm" variant="secondary" :ghost="activeView !== 'list'" @click="activeView = 'list'">List</VButton>
+              <VButton size="sm" variant="secondary" :ghost="activeView !== 'map'" @click="activeView = 'map'">Map</VButton>
               <VButton size="sm" variant="secondary" :ghost="activeView !== 'phenology'" @click="activeView = 'phenology'">Phenology</VButton>
               <VButton size="sm" variant="secondary" :ghost="activeView !== 'timeline'" @click="activeView = 'timeline'">Timeline</VButton>
             </div>
-            <MultiSelect v-model="filterCountries" :options="countries" placeholder="All countries" />
+            <MultiSelect v-if="regions.length" v-model="filterRegions" :options="regions" placeholder="All regions" />
+            <MultiSelect v-if="countries.length > 1" v-model="filterCountries" :options="countries" placeholder="All countries" />
             <MultiSelect v-model="filterCollectors" :options="collectors" placeholder="All collectors" />
             <VToggle v-model="filterTypeOnly" size="sm">Type specimens only</VToggle>
             <VToggle v-model="filterMediaOnly" size="sm">Has media only</VToggle>
@@ -289,6 +342,8 @@
 <script setup>
 import GalleryThumbnailList from '@/components/Gallery/GalleryThumbnailList.vue'
 import MultiSelect from './MultiSelect.vue'
+import RecordsMap from './RecordsMap.vue'
+import { KIND_COLORS } from '../config.js'
 import { computed, ref, watch, onBeforeUnmount } from 'vue'
 import '../../_shared/panel-tokens.css'
 
@@ -323,6 +378,30 @@ const props = defineProps({
   countries: {
     type: Array,
     default: () => []
+  },
+
+  // Regions (stateProvince) of the home country, for the region filter
+  regions: {
+    type: Array,
+    default: () => []
+  },
+
+  // The country the site is about (../config.js); '' disables the
+  // "Type material from outside …" block
+  homeCountry: {
+    type: String,
+    default: ''
+  },
+
+  // Georeferenced records for the Map view: [{ lat, lng, kind, label, detail }]
+  mapPoints: {
+    type: Array,
+    default: () => []
+  },
+
+  notMapped: {
+    type: Number,
+    default: 0
   },
 
   collectors: {
@@ -366,6 +445,7 @@ const props = defineProps({
 const emit = defineEmits(['select', 'show-detail'])
 
 const filterCountries = defineModel('filterCountries')
+const filterRegions = defineModel('filterRegions', { default: () => [] })
 const filterCollectors = defineModel('filterCollectors')
 const filterTypeOnly = defineModel('filterTypeOnly')
 const filterMediaOnly = defineModel('filterMediaOnly')
@@ -376,8 +456,13 @@ const filterIdentifiedYear = defineModel('filterIdentifiedYear')
 const showAll = ref(false)
 const activeView = ref('list')
 
+// Types collected outside the home country get their own block; the rest is the main list
+const isForeignType = (i) => !!(props.homeCountry && i.typeStatus && i.country && i.country !== props.homeCountry)
+const foreignTypes = computed(() => props.list.filter(isForeignType))
+const mainList = computed(() => props.list.filter((i) => !isForeignType(i)))
+
 const items = computed(() =>
-  showAll.value ? props.list : props.list.slice(0, props.max)
+  showAll.value ? mainList.value : mainList.value.slice(0, props.max)
 )
 
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -625,6 +710,13 @@ function onTimelineMouseLeave() {
 // clears just this one" affordance.
 const activeFilters = computed(() => {
   const pills = []
+  ;(filterRegions.value || []).forEach((region) => {
+    pills.push({
+      key: `region:${region}`,
+      label: `Region: ${region}`,
+      clear: () => (filterRegions.value = filterRegions.value.filter((r) => r !== region))
+    })
+  })
   ;(filterCountries.value || []).forEach((country) => {
     pills.push({
       key: `country:${country}`,

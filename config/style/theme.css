@@ -336,3 +336,15 @@ input[type='text'].border-base-border:focus,
   --soi-ramp-4: #dcb03a !important;
   --soi-ramp-5: #f6d77a !important;
 }
+
+/* UI accent used by the custom panels (bars, toggles, view buttons, pills) */
+:root {
+  --color-ui-accent: 154, 106, 18; /* deep amber */
+}
+.dark {
+  --color-ui-accent: 240, 196, 64; /* SoI yellow */
+}
+/* The yellow accent needs dark text on top of it */
+.dark .tp-button.bg-secondary {
+  color: rgb(26, 28, 22) !important;
+}

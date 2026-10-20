@@ -42,6 +42,67 @@ Toggle between two views (persisted per viewer in `localStorage` as `taxonpages:
   side effect the pill shows the OTU's full name (incl. subgenus) even when the lead's
   stored `target_label` omitted it.
 
+### Print / PDF
+
+A **Print / PDF** button (under the Guided / Full key switch) prints the **full key**, whatever
+view is open, and the browser's "Save as PDF" turns it into a PDF:
+
+- **Only the key**: site header, footer, buttons, the row of badges under the title
+  (couplets, taxa, updated, Taxonomy, Areas), the geography picker and the
+  "+N more images" links are hidden; black on white; dimmed (out-of-area) leads print normally.
+- **Citation**: "How to cite: Sommaggio D, Dal Pos D (2026). <key title>. In: Syrphidae of
+  Italy (SoI). Available at https://syrphidaeitaly.com/#/key/<id>?format=full (accessed <date>)."
+  at the top and again at the end (`keyCitation` in `lib/printKey.js`, from `project_authors`,
+  `project_citation`, `project_url` in `config/project.yml`).
+- **Running footer and page numbers** on every page: "<key title> · Syrphidae of Italy (SoI)"
+  left, "Page n / N" right (`@page` margin boxes, injected at print time by `pageCss`).
+  Chrome and Edge print them; Firefox and Safari print the key and the citation blocks but
+  not the footer (they don't support margin boxes yet) — use Chrome/Edge for the PDF.
+- **Figures** (checkbox, on by default): the key's own figures, max 55 mm high; the print
+  waits up to 8 s for them to load (`imagesReady`). Taxon photos used as a fallback online
+  (`.key-fig-fallback`) are never printed. Without figures, whole couplets are kept on one page;
+  with figures, single leads are never split.
+- **Links in the PDF**: taxon names (and the Scope) link to their page on the public website
+  (`https://syrphidaeitaly.com/#/otus/…`, dark blue), and couplet numbers ("→ 5", "from 3") jump
+  to that couplet inside the PDF (`linksForPdf` in `KeyView.vue`, undone after printing).
+  Chrome/Edge "Save as PDF" keeps both kinds of link.
+- After printing the page returns to the view it was in (Guided stays Guided).
+
+Files: `components/PrintKeyButton.vue` (button + menu, EN/IT), `lib/printKey.js`
+(+ `lib/printKey.test.js`: `node modules/keys/lib/printKey.test.js`), print rules at the end of
+`KeyView.vue` (`html.key-printing …`).
+
+### Around the key (both views)
+
+- **Taxa in this key** — under the key, every taxon it leads to, alphabetical, with the
+  couplet(s) where it keys out (`taxaReached`); collapsed on screen ("Show"), always printed.
+- **Report a problem** — "✉ Problem with this couplet?" (Full key: on hover of each couplet;
+  Guided: under the choices) and "✉ Report a problem with this key" at the bottom open an
+  e-mail to the curators (emails from `pages/components/Section/Data/curators.js`) with the
+  key, the couplet and the link already filled in (`feedbackMailto`; provided as `keyFeedback`).
+
+### Printed key (PDF), in order
+
+1. **Front page** (`KeyFrontPage.vue`): title, scope, description, primary source, authors,
+   version ("Version of 2026-09-15 · 26 couplets · 14 taxa", from `key_updated_at`), date
+   printed and citation. No running header/footer on it.
+2. The key, with the version top right and "title · site … Page n / N" at the bottom.
+3. **Taxa in this key** (new page, two columns; couplet numbers link inside the PDF).
+4. **References** — every work cited in the key, in full (new page).
+5. **Last block**: the citation again and a **QR code** to the key online (`qrSvg`; QR library
+   vendored as `lib/vendor/qrcode.js`, qrcode-generator 1.4.4, MIT) — kept together at the very
+   end so it can be cut off (e.g. for a manuscript submission).
+
+Couplet numbers print in the classic style, "1." in bold (no circle; `.key-couplet-num`).
+
+### Keys page
+
+- **Find the key for a species** — every taxon reached by the public keys, with the key(s)
+  that reach it, searchable (`speciesIndex`; the taxa come from the `/leads/key/:id` calls
+  the page already makes). The key filter at the top also matches the taxa a key reaches.
+
+Tests: `node modules/keys/lib/keyExtras.test.js`.
+
 ### Figures and citations
 
 - **Per-lead figures** — a lead's own `figures` (from `GET /leads/key/:id`) render in the
